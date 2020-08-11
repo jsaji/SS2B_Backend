@@ -9,7 +9,7 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
 from sqlalchemy import exc
 from functools import wraps
-from .models import db, User, Circuit
+from .models import db, User
 import jwt
 
 api = Blueprint('api', __name__)

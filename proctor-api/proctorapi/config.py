@@ -5,6 +5,7 @@
 """
 
 class BaseConfig(object):
+    # NEED TO USE ENV VARIABLES HERE
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'mysql://admin:tbLs52EC@uts-studio-quantum.cgxjp9m1gyhm.ap-southeast-2.rds.amazonaws.com:3306/quantum'
     SQLALCHEMY_TRACK_MODIFICATIONS = False

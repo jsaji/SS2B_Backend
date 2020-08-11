@@ -8,7 +8,7 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
 from proctorapi.application import create_app
-from proctorapi.models import db, User, Circuit
+from proctorapi.models import db, User
 
 app = create_app()
 
@@ -23,8 +23,7 @@ manager.add_command('db', MigrateCommand)
 def shell_ctx():
     return dict(app=app,
                 db=db,
-                User=User,
-                Circuit=Circuit
+                User=User
                )
 
 if __name__ == '__main__':
