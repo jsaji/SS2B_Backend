@@ -11,6 +11,7 @@ pip install -r requirements.txt
 ```
 ## Connecting to the live db
 Download db_link.txt from 41096_SPR_Wednesday/W12/Files and place in proctor-api/proctorapi
+
 It is already included in .gitignore but please be mindful and DO NOT commit this file to a public github repo.
 
 ## Running the API locally
