@@ -24,8 +24,6 @@ class User(db.Model):
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_date = db.Column(db.DateTime, default=datetime.utcnow)
 
-    //circuits = relationship("Circuit")
-
     def __init__(self, student_id, is_admin, first_name, last_name, email, password, confirm_admin):
         self.student_id = student_id
         self.is_admin = is_admin
