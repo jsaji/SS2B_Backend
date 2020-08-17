@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import exc
 from functools import wraps
 from .models import db, User
+import cv2
 import jwt
 
 api = Blueprint('api', __name__)
@@ -83,3 +84,16 @@ def token_required(f):
             return jsonify(invalid_msg), 401
 
     return _verify
+
+@api.route('/video-capture', methods=('POST',))
+def video_capture():
+    video = cv2.VideoCapture(0)
+    i = 1
+    while True:
+        i += 1
+        check, frame = video.read()
+        cv2.imshow('Capturing', frame)  #show capture video
+        cv2.waitKey(42)                 #1000ms/24 frames = ~41.66ms per frame
+        if i == 240:                    #24 frames * 10 seconds = 240 frames, end capture
+            break
+    return jsonify({ 'check': check, 'frame': frame.tolist() }), 200
