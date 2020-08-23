@@ -4,13 +4,14 @@ api.py
   REST requests and responses
 """
 
-from flask import Blueprint, jsonify, request, make_response, current_app
+from flask import Blueprint, jsonify, request, make_response, current_app, render_template, Response
 from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
 from sqlalchemy import exc
 from functools import wraps
 from .models import db, User
 import cv2
+import time
 import jwt
 
 api = Blueprint('api', __name__)
@@ -97,3 +98,19 @@ def video_capture():
         if i == 240:                    #24 frames * 10 seconds = 240 frames, end capture
             break
     return jsonify({ 'check': check, 'frame': frame.tolist() }), 200
+
+def video():
+    video = cv2.VideoCapture(0)
+    while(video.isOpened()):
+        status, image = video.read()
+        if status == True:
+            image = cv2.resize(image, (0,0), fx = 1, fy = 1)
+            frame = cv2.imencode('.jpg', image)[1].tobytes()
+            yield(b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            time.sleep(0.1)
+        else:
+            break
+
+@api.route('/stream', methods=('GET',))
+def stream():
+    return Response(video(), mimetype='multipart/x-mixed-replace; boundary=frame')
