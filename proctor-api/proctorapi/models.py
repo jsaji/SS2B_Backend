@@ -16,7 +16,7 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = 'users'
 
-    user_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     first_name = db.Column(db.String(191), nullable=False)
     last_name = db.Column(db.String(191), nullable=False)
     password = db.Column(db.String(255), nullable=False)
@@ -25,67 +25,85 @@ class User(db.Model):
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_date = db.Column(db.DateTime, default=datetime.utcnow)
     
-
-    exams = relationship("Exam")
+    exams = relationship("ExamRecording")
 
     def __init__(self, user_id, first_name, last_name, password, confirm_examiner):
         self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
         self.password = generate_password_hash(password, method='sha256')
-        self.confirm_examiner = generate_password_hash(confirm_admin, method='sha256')
+        self.confirm_examiner = generate_password_hash(confirm_examiner, method='sha256')
     
-       @classmethod
-           def authenticate(cls, **kwargs):
-               email = kwargs.get('email')
-               password = kwargs.get('password')
+    @classmethod
+    def authenticate(cls, **kwargs):
+        email = kwargs.get('email')
+        password = kwargs.get('password')
   
-       if not email or not password:
-         return None
+        if not email or not password:
+            return None
 
-         user = cls.query.filter_by(email=email).first()
-      if not user or not check_password_hash(user.password, password):
-         return None
+        user = cls.query.filter_by(email=email).first()
+        if not user or not check_password_hash(user.password, password):
+            return None
 
-       return user
+        return user
 
-     def to_dict(self):
-      return dict(id=self.user_id, email=self.email)
+    def to_dict(self):
+        return dict(id=self.user_id, email=self.email)
+
 
 class Exam(db.Model):
     __tablename__ = 'exam'
     
     exam_id = db.Column(db.Integer, primary_key=True)
-    subject_id = db.Column(db.Integer)
     exam_name = db.Column(db.String(500), nullable=False)
+    subject_id = db.Column(db.Integer)
     login_code = db.Column(db.String(255), nullable=False)
     start_date = db.Column(db.DateTime, default=datetime.utcnow)
     end_date = db.Column(db.DateTime, default=datetime.utcnow)
-    duration = db.Column(db.Integer )
+    duration = db.Column(db.Integer)
 
-    def __init__(self, exam_id, exam_name, subject_id, login_code):
+    exam_recordings = relationship('ExamRecording')
+
+    def __init__(self, exam_id, exam_name, subject_id, login_code, start_date, end_date, duration):
         self.exam_id = exam_id
         self.exam_name = exam_name
         self.subject_id = subject_id
         self.login_code = login_code
+        self.start_date = start_date
+        self.end_date = end_date
+        self.duration = duration
+
 
 class ExamRecording(db.Model):
     __tablename__ = 'examRecording'
     
-    exam_id = db.column(db.Integer, ForeignKey('exam.id'), primary_key=True)
-    user_id = db.column (db.Integer, ForeignKey('user.id'), primary_key=True)
-    examrecording_id = db.column (db.Integer, nullable = False)
+    exam_recording_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    exam_id = db.Column(db.Integer, db.ForeignKey('exam.exam_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     time_started = db.Column(db.DateTime, default=datetime.utcnow)
     time_ended = db.Column(db.DateTime, default=datetime.utcnow)
-    misconduct_count = db.Column(db.Integer, nullable = False)
-    video_link = db.Column(db.String(255), nullable = False)
+    video_link = db.Column(db.String(255), nullable=True)
+    
+    warnings = relationship("ExamWarning")
+
+    def __init__(self, exam_recording_id, exam_id, user_id):
+        self.exam_recording_id = exam_recording_id
+        self.exam_id = exam_id
+        self.user_id = user_id
+
 
 class ExamWarning(db.Model):
     __tablename__ = 'examWarning'
     
-    warning_id = db.column (db.Integer, primary_key=True)
-    exam_id = db.column(db.Integer, ForeignKey('exam.id'))
-    user_id = db.column (db.Integer, ForeignKey('user.id'))
-    examrecording_id = db.column (db.Integer, ForeignKey('examrecording.id'))
+    warning_id = db.Column(db.Integer, primary_key=True)
+    exam_recording_id = db.Column(db.Integer, db.ForeignKey('examRecording.exam_recording_id'))
     warning_time = db.Column(db.DateTime, default=datetime.utcnow)
-    description = db.column(db.String(500), nullable = False)
+    description = db.Column(db.String(500), nullable=False)
+
+    def __init__(self, warning_id, exam_recording_id, warning_time, description):
+        self.warning_id = warning_id
+        self.exam_recording_id = exam_recording_id
+        self.warning_time = warning_time
+        self.description = description
+
