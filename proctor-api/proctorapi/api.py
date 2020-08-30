@@ -9,10 +9,14 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
 from sqlalchemy import exc
 from functools import wraps
+from PIL import Image
 from .models import db, User
 import cv2
 import time
 import jwt
+import os
+import numpy
+import pickle
 
 api = Blueprint('api', __name__)
 
@@ -88,29 +92,71 @@ def token_required(f):
 
 @api.route('/video-capture', methods=('POST',))
 def video_capture():
-    video = cv2.VideoCapture(0)
-    i = 1
-    while True:
-        i += 1
-        check, frame = video.read()
-        cv2.imshow('Capturing', frame)  #show capture video
-        cv2.waitKey(42)                 #1000ms/24 frames = ~41.66ms per frame
-        if i == 240:                    #24 frames * 10 seconds = 240 frames, end capture
-            break
-    return jsonify({ 'check': check, 'frame': frame.tolist() }), 200
 
-def video():
-    video = cv2.VideoCapture(0)
-    while(video.isOpened()):
+    data = request.get_json()
+    user = User.authenticate(**data)
+
+    if not user:
+        return jsonify({ 'message': 'Invalid credentials', 'authenticated': False }), 401
+
+    student_id = User.query.filter_by(email=data['email']).first().student_id
+
+    face_cascade = cv2.CascadeClassifier('cascades/haarcascade_frontalface_alt2.xml')
+    recognizer = cv2.face.LBPHFaceRecognizer_create()
+    recognizer.write("trainer.yml")
+
+    video = cv2.VideoCapture(0)     #Access camera
+    count = 0                       #Search fail count, total 3 allowed
+    while count < 3 and video.isOpened():
+
         status, image = video.read()
-        if status == True:
-            image = cv2.resize(image, (0,0), fx = 1, fy = 1)
-            frame = cv2.imencode('.jpg', image)[1].tobytes()
-            yield(b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-            time.sleep(0.1)
-        else:
-            break
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
 
-@api.route('/stream', methods=('GET',))
-def stream():
-    return Response(video(), mimetype='multipart/x-mixed-replace; boundary=frame')
+        for (x, y, w, h) in faces:
+            roi_gray = gray[y:y + h, x:x + w]
+
+            color = (0, 255, 0)
+            stroke = 2
+            cv2.rectangle(image, (x, y), (x + w, y + h), color, stroke)
+
+            y_labels = []
+            x_train = []
+            current_id = 0
+            label_ids = {}
+
+            for root, dirs, files in os.walk('images/' + str(student_id)):
+                for file in files:
+                    if file.endswith("png") or file.endswith("jpg"):
+
+                        path = os.path.join(root, file)
+                        label = os.path.basename(root).replace(" ", "-").lower()
+                        if label in label_ids:
+                            pass
+                        else:
+                            label_ids[label] = current_id
+                            current_id += 1
+                        id_ = label_ids[label]
+
+                        pil_image = Image.open(path).convert("L")  # grayscale
+                        image_array = numpy.array(pil_image, "uint8")
+
+                        roi = image_array[y:y + h, x:x + w]
+                        x_train.append(roi)
+                        y_labels.append(id_)  # verify image, convert to NUMPY arr and gray
+
+                        recognizer.train(x_train, numpy.array(y_labels))
+                        recognizer.write("trainer.yml")
+                        recognizer.read("trainer.yml")
+
+                        id_, conf = recognizer.predict(roi_gray)
+                        if conf >= 45 and conf <= 85:
+                            print(True)
+                            return jsonify({ 'student_id': student_id, 'positive_id': True }), 200
+
+            with open("label.pickle", 'wb') as f:
+                pickle.dump(label_ids, f)
+
+        count += 1
+
+    return jsonify({ 'message': 'Student not found', 'positive_id': False }), 500
