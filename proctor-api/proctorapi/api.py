@@ -65,13 +65,14 @@ def create_exam():
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam/<int:exam_id>', methods=('GET',))
-def get_exam():
+def get_exam(exam_id):
     try:
-        print("hola")
-        # try get the exam
-        # return successful message ->
-        # return jsonify(u.to_dict()), 200
-        return '', 200
+        # Gets exam by exam_id, returns 404 if not found
+        exam = Exam.query.filter_by(exam_id=exam_id).first()
+        if exam is None:
+            return jsonify({'message':'Exam with exam_id {} not found'.format(exam_id)})
+        return jsonify(exam.to_dict()), 200
+
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -117,16 +118,44 @@ def create_exam_recording():
 
 @api.route('/examinee/exam_recording', methods=('GET',))
 def get_exam_recording():
+    """
+    Gets exam recordings - can filter by user_id, exam_id. Returned results are limited by results_length and page_number.
+    """
     try:
-        user_id = request.args.get('user_id', default=-1, type=int)
-        exam_id = request.args.get('exam_id', default=-1, type=int)
-        if -1 in (user_id, exam_id):
-            return jsonify({ 'message': 'Parameters user_id and exam_id are required' }), 404
-        print("hola")
-        # try get the exam recording
-        # return successful message ->
-        # return jsonify(u.to_dict()), 200
-        return '', 200
+        # Obtains parameters
+        user_id = request.args.get('user_id', default=0, type=int)
+        exam_id = request.args.get('exam_id', default=0, type=int)
+        page_number = request.args.get('page_number', default=1, type=int)
+        results_length = request.args.get('results_length', default=25, type=int)
+
+        # Checks for invalid page_number / results_length
+        if page_number < 1:
+            page_number = 1
+        if results_length < 1 or results_length > 100:
+            results_length = 25
+        
+        results_end_index = page_number*results_length
+
+        if user_id and exam_id:
+            # If user_id and exam_id are present, find the specific exam recording
+            results = ExamRecording.query.filter_by(user_id=user_id, exam_id=exam_id).first()
+        elif exam_id:
+            # If just exam_id is present, find the exam recordings associated with exam_id
+            results = ExamRecording.query.filter_by(user_id=user_id, exam_id=exam_id).order_by(ExamRecording.time_started.desc()).all()
+        elif user_id:
+            # If just user_id is present, find the exam recordings associated with user_id
+            results = ExamRecording.query.filter_by(user_id=user_id).order_by(ExamRecording.time_started.desc()).all()
+        else:
+            # Else get all exam recordings
+            results = ExamRecording.query.limit(results_end_index).order_by(ExamRecording.time_started.desc()).all()
+
+        # Reduces number of results and serialises into string format for payload
+        results = results[results_end_index - results_length:results_end_index]
+        exam_recordings = [r.to_dict() for r in results]
+
+        payload = {'exam_recordings':exam_recordings}
+        return jsonify(payload), 200
+
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -134,23 +163,37 @@ def get_exam_recording():
 @api.route('/examinee/exam_recording/update', methods=('POST',))
 def update_exam_recording():
     try:
-        print("hola")
-        # try get data
-        # find the existing model
-        # return successful message
-        # return jsonify(u.to_dict()), 200
-        return '', 204
+        
+        # Gets action, either start or end
+        action = request.args.get('action', default='').lower()
+        
+        data = request.json()
+        # Preliminary checks
+        if not data.get('exam_recording_id'):
+            return jsonify({'message':'No exam_recording_id included in payload'})
+        exam_recording_id = data['exam_recording_id']
+        exam_recording = ExamRecording.query.get(exam_recording_id)
+        if exam_recording is None:
+            return jsonify({'message':'Exam recording with exam_recording_id {} not found'.format(exam_recording_id)})
+        
+        # If start, start the exam recording, if end, end exam recording and save chanegs
+        if action == 'start':
+            exam_recording.time_started = datetime.utcnow()
+        elif action == 'end':
+            exam_recording.time_ended = datetime.utcnow()
+        else:
+            return jsonify({'message':'Include parameter action: start, end'}), 400
+        
+        db.session.commit()
+        
+        return jsonify({'message':'Exam recording has '+action+'ed for user_id {}'.format(exam_recording.user_id)}), 200
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examiner/exam_recording/delete', methods=('DELETE',))
-def delete_exam_recording():
+@api.route('/examiner/exam_recording/delete/<int:user_id>/<int:exam_id>', methods=('DELETE',))
+def delete_exam_recording(user_id, exam_id):
     try:
-        user_id = request.args.get('user_id', default=-1, type=int)
-        exam_id = request.args.get('exam_id', default=-1, type=int)
-        if -1 in (user_id, exam_id):
-            return jsonify({ 'message': 'Parameters user_id and exam_id are required' }), 404
         # try get existing exam recording
         # check if we're allowed to delete it
         # if yes,
