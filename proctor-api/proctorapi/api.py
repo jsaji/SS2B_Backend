@@ -54,14 +54,16 @@ def login():
 @api.route('/examiner/exam/create', methods=('POST',))
 def create_exam():
     try:
-        print("hola")
-        # try get data
-        # create the model and add to db
-        # return successful message
-        # return jsonify(u.to_dict()), 201
+        data = request.get_json()
+        exam = Exam(**data)
+        print(exam.to_dict())
+        '''
+        db.session.add(exam)
+        db.session.commit()
+        '''
         return '', 201
     except exc.SQLAlchemyError as e:
-        db.session.rollback()
+        #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam/<int:exam_id>', methods=('GET',))
@@ -106,14 +108,17 @@ def delete_exam():
 @api.route('/examinee/exam_recording/create', methods=('POST',))
 def create_exam_recording():
     try:
-        print("hola")
-        # try get data
-        # create the model and add to db
-        # return successful message
-        # return jsonify(--.to_dict()), 200
+
+        data = request.get_json()
+        examRecording = ExamRecording(**data)
+        print(examRecording.to_dict())
+        '''
+        db.session.add(examRecording)
+        db.session.commit()
+        '''
         return '', 201
     except exc.SQLAlchemyError as e:
-        db.session.rollback()
+        #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examinee/exam_recording', methods=('GET',))
@@ -206,13 +211,16 @@ def delete_exam_recording(user_id, exam_id):
 @api.route('/examiner/exam_warning/create', methods=('POST',))
 def create_exam_warning():
     try:
-        # try get data
-        # create the model and add to db
-        # return successful message
-        # return jsonify(--.to_dict()), 201
+        data = request.get_json()
+        examWarning = ExamWarning(**data)
+        print(examWarning.to_dict())
+        '''
+        db.session.add(examWarning)
+        db.session.commit()
+        '''
         return '', 201
     except exc.SQLAlchemyError as e:
-        db.session.rollback()
+        #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning', methods=('GET',))
