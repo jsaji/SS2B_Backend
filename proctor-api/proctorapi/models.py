@@ -7,8 +7,8 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy_imageattach.entity import Image, image_attachment
+#from sqlalchemy.ext.declarative import declarative_base
+#from sqlalchemy_imageattach.entity import Image, image_attachment
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -66,14 +66,23 @@ class Exam(db.Model):
 
     exam_recordings = relationship('ExamRecording', uselist=False)
 
-    def __init__(self, exam_id, exam_name, subject_id, login_code, start_date, end_date, duration):
-        self.exam_id = exam_id
+    def __init__(self, exam_name, subject_id, login_code, start_date, end_date, duration):
         self.exam_name = exam_name
         self.subject_id = subject_id
         self.login_code = login_code
         self.start_date = start_date
         self.end_date = end_date
         self.duration = duration
+
+    def to_dict(self):
+        return {
+            'exam_id':self.exam_id,
+            'subject_id':self.subject_id,
+            'login_code':self.login_code,
+            'start_date':self.start_date,
+            'end_date':self.end_date,
+            'duration':self.duration
+        }
 
 
 class ExamRecording(db.Model):
@@ -89,11 +98,19 @@ class ExamRecording(db.Model):
     warnings = relationship("ExamWarning")
     exam = relationship("Exam")
 
-    def __init__(self, exam_recording_id, exam_id, user_id):
-        self.exam_recording_id = exam_recording_id
+    def __init__(self, exam_id, user_id):
         self.exam_id = exam_id
         self.user_id = user_id
 
+    def to_dict(self):
+        return {
+            'exam_recording_id':self.exam_recording_id,
+            'exam_id':self.exam_id,
+            'user_id':self.user_id,
+            'time_started':self.time_started,
+            'time_ended':self.time_ended,
+            'video_link':self.video_link
+        }
 
 class ExamWarning(db.Model):
     __tablename__ = 'examWarnings'
@@ -103,8 +120,15 @@ class ExamWarning(db.Model):
     warning_time = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String(500), nullable=False)
 
-    def __init__(self, warning_id, exam_recording_id, warning_time, description):
-        self.warning_id = warning_id
+    def __init__(self, exam_recording_id, warning_time, description):
         self.exam_recording_id = exam_recording_id
         self.warning_time = warning_time
         self.description = description
+
+    def to_dict(self):
+        return {
+            'warning_id':self.warning_id,
+            'exam_recording_id':self.exam_recording_id,
+            'warning_time':self.warning_time,
+            'description':self.description
+        }
