@@ -72,7 +72,7 @@ def get_exam(exam_id):
         # Gets exam by exam_id, returns 404 if not found
         exam = Exam.query.filter_by(exam_id=exam_id).first()
         if exam is None:
-            return jsonify({'message':'Exam with exam_id {} not found'.format(exam_id)})
+            return jsonify({'message':'Exam with exam_id {} not found'.format(exam_id)}), 404
         return jsonify(exam.to_dict()), 200
 
     except exc.SQLAlchemyError as e:
@@ -80,7 +80,7 @@ def get_exam(exam_id):
         return jsonify({ 'message': e.args }), 500
     
 @api.route('/examiner/exam/update', methods=('POST',))
-def update_exam():
+def update_exam(): #arpita to do
     try:
         print("hola")
         # try get data
@@ -93,7 +93,7 @@ def update_exam():
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam/delete/<int:exam_id>', methods=('DELETE',))
-def delete_exam():
+def delete_exam(): #arpita to do
     try:
         print("hola")
         # try get existing exam
@@ -175,11 +175,11 @@ def update_exam_recording():
         data = request.json()
         # Preliminary checks
         if not data.get('exam_recording_id'):
-            return jsonify({'message':'No exam_recording_id included in payload'})
+            return jsonify({'message':'No exam_recording_id included in payload'}), 404
         exam_recording_id = data['exam_recording_id']
         exam_recording = ExamRecording.query.get(exam_recording_id)
         if exam_recording is None:
-            return jsonify({'message':'Exam recording with exam_recording_id {} not found'.format(exam_recording_id)})
+            return jsonify({'message':'Exam recording with exam_recording_id {} not found'.format(exam_recording_id)}), 404
         
         # If start, start the exam recording, if end, end exam recording and save chanegs
         if action == 'start':
@@ -197,7 +197,7 @@ def update_exam_recording():
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_recording/delete/<int:user_id>/<int:exam_id>', methods=('DELETE',))
-def delete_exam_recording(user_id, exam_id):
+def delete_exam_recording(user_id, exam_id): 
     try:
         # try get existing exam recording
         # check if we're allowed to delete it
@@ -226,19 +226,22 @@ def create_exam_warning():
 @api.route('/examiner/exam_warning', methods=('GET',))
 def get_exam_warning():
     try:
-        exam_recording_id = request.args.get('exam_recording_id', default=-1, type=int)
-        if exam_recording_id==-1:
-            return jsonify({ 'message': 'Parameter exam_recording_id is required' }), 404
-        # try get the exam recording
-        # return successful message ->
-        # return jsonify(u.to_dict()), 200
-        return '', 200
+        exam_warning_id = request.args.get('exam_warning_id', default=-1, type=int)
+        if exam_warning_id==-1:
+            return jsonify({ 'message': 'Parameter exam_warning_id is required' }), 404
+
+        exam_warning = ExamWarning.query.get('exam_warning_id')
+        if exam_warning is None:
+            return jsonify({ 'message':'Exam warning with exam_warning_id {} not found'.format(exam_warning_id)}), 404
+
+        return jsonify(exam_warning.to_dict()), 200
     except exc.SQLAlchemyError as e:
-        db.session.rollback()
+        #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
+        
     
 @api.route('/examiner/exam_warning/update', methods=('POST',))
-def update_exam_warning():
+def update_exam_warning(): #arpita to do
     try:
         # try get data
         # find the existing model
@@ -250,7 +253,7 @@ def update_exam_warning():
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning/delete', methods=('DELETE',))
-def delete_exam_warning():
+def delete_exam_warning(): #arpita to do
     try:
         exam_warning_id = request.args.get('exam_warning_id', default=-1, type=int)
         if exam_warning_id==-1:
