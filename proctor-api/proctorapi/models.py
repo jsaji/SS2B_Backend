@@ -17,16 +17,16 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = 'users'
 
-    user_id = db.Column(INTEGER(unsigned=True), primary_key=True)
+    user_id = db.Column(INTEGER(unsigned=True), primary_key=True, unique=True, autoincrement=False)
     first_name = db.Column(db.String(191), nullable=False)
     last_name = db.Column(db.String(191), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     confirm_examiner = db.Column(db.String(255), nullable=True)
-    auth_image = db.Column(db.String(255), nullable = False)
-    created_date = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_date = db.Column(db.DateTime, default=datetime.utcnow)
+    auth_image = db.Column(db.String(255), nullable = True)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow())
+    updated_date = db.Column(db.DateTime, default=datetime.utcnow())
     
-    exam_recordings = relationship("ExamRecording")
+    exam_recordings = relationship("ExamRecording", backref="users")
 
     def __init__(self, user_id, first_name, last_name, password, confirm_examiner):
         self.user_id = user_id
@@ -60,11 +60,11 @@ class Exam(db.Model):
     exam_name = db.Column(db.String(500), nullable=False)
     subject_id = db.Column(db.Integer)
     login_code = db.Column(db.String(255), nullable=False)
-    start_date = db.Column(db.DateTime, default=datetime.utcnow)
-    end_date = db.Column(db.DateTime, default=datetime.utcnow)
+    start_date = db.Column(db.DateTime, default=datetime.utcnow())
+    end_date = db.Column(db.DateTime, default=datetime.utcnow())
     duration = db.Column(db.Integer)
 
-    exam_recordings = relationship('ExamRecording', uselist=False)
+    exam_recordings = relationship('ExamRecording', uselist=False, backref="exams")
 
     def __init__(self, exam_name, subject_id, login_code, start_date, end_date, duration):
         self.exam_name = exam_name
@@ -91,12 +91,11 @@ class ExamRecording(db.Model):
     exam_recording_id = db.Column(INTEGER(unsigned=True), primary_key=True)
     exam_id = db.Column(INTEGER(unsigned=True), db.ForeignKey('exams.exam_id'), nullable=False)
     user_id = db.Column(INTEGER(unsigned=True), db.ForeignKey('users.user_id'), nullable=False)
-    time_started = db.Column(db.DateTime, default=datetime.utcnow)
-    time_ended = db.Column(db.DateTime, default=datetime.utcnow)
+    time_started = db.Column(db.DateTime, nullable=True)
+    time_ended = db.Column(db.DateTime, nullable=True)
     video_link = db.Column(db.String(255), nullable=True)
     
-    warnings = relationship("ExamWarning")
-    exam = relationship("Exam")
+    warnings = relationship("ExamWarning", backref='examRecordings')
 
     def __init__(self, exam_id, user_id):
         self.exam_id = exam_id
@@ -117,7 +116,7 @@ class ExamWarning(db.Model):
     
     warning_id = db.Column(INTEGER(unsigned=True), primary_key=True)
     exam_recording_id = db.Column(INTEGER(unsigned=True), db.ForeignKey('examRecordings.exam_recording_id'), nullable=False)
-    warning_time = db.Column(db.DateTime, default=datetime.utcnow)
+    warning_time = db.Column(db.DateTime, default=datetime.utcnow())
     description = db.Column(db.String(500), nullable=False)
 
     def __init__(self, exam_recording_id, warning_time, description):
