@@ -268,6 +268,61 @@ def delete_exam_warning(): #arpita to do
         return jsonify({ 'message': e.args }), 500
 
 
+@api.route('/examiner/examinee', methods=('GET',))
+def get_examinee():
+    try:
+        # Potential parameters to filter by
+        user_id = request.args.get('user_id', default=-1, type=int)
+        exam_id = request.args.get('exam_id', default=-1, type=int)
+        in_progress = request.args.get('in_progress', default=None, type=bool)
+        period_start = request.args.get('period_start', default=None, type=toDate)
+        period_end = request.args.get('period_end', default=None, type=datetime)
+        has_warnings = request.args.get('has_warnings', default=None, type=bool)
+
+        page_number = request.args.get('page_number', default=1, type=int)
+        results_length = request.args.get('results_length', default=25, type=int)
+
+        results_end_index = page_number*results_length
+
+        # Base query
+        results = db.session.query(
+            User, ExamRecording, Exam, ExamWarning
+            ).filter(
+                User.user_id == ExamRecording.user_id
+            ).filter(
+                ExamRecording.exam_id == Exam.exam_id
+            ).filter(
+                ExamRecording.exam_recording_id == ExamWarning.exam_recording_id
+            )
+        
+        if user_id != -1:
+            results = results.filter_by(User.user_id==user_id)
+        if exam_id != -1:
+            results = results.filter_by(Exam.exam_id==exam_id)
+        if in_progress is not None:
+            if in_progress:
+                results = results.filter_by(ExamRecording.time_started < datetime.utcnow() and ExamRecording.time_ended is None)
+            else:
+                results = results.filter_by(ExamRecording.time_ended is not None)
+        if has_warnings is not None:
+            if has_warnings:
+                results = results.filter_by(ExamWarning.exam_warning_id is not None)
+            else:
+                results = results.filter_by(ExamWarning.exam_warning_id is None)
+        if period_start:
+            results = results.filter_by(ExamRecording.time_started > period_start)
+        if period_end:
+            results = results.filter_by(ExamRecording.time_ended < period_end)
+
+        results = results[results_end_index - results_length:results_end_index]
+        return_payload = [r.to_dict() for r in results]
+
+        return jsonify(return_payload), 200
+    except exc.SQLAlchemyError as e:
+        #db.session.rollback()
+        return jsonify({ 'message': e.args }), 500
+
+
 # This is a decorator function which will be used to protect authentication-sensitive API endpoints
 def token_required(f):
     @wraps(f)
