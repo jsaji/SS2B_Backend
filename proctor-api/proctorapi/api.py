@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import exc
 from functools import wraps
 from .models import db, User, Exam, ExamRecording, ExamWarning
-from services.misc import confirm_examiner, InvalidPassphrase
+from .services.misc import generate_exam_code, confirm_examiner, InvalidPassphrase
 import jwt
 import json
 
@@ -63,13 +63,17 @@ def login():
 def create_exam():
     try:
         data = request.get_json()
+        code_found = False
+        while not code_found:
+            potential_login_code = generate_exam_code()
+            code_exists = Exam.query.filter_by(login_code=potential_login_code).first()
+            if not code_exists:
+                data['login_code'] = potential_login_code
+                break
         exam = Exam(**data)
-        print(exam.to_dict())
-        '''
         db.session.add(exam)
         db.session.commit()
-        '''
-        return '', 201
+        return jsonify(exam.to_dict()), 201
     except exc.SQLAlchemyError as e:
         #db.session.rollback()
         return jsonify({ 'message': e.args }), 500

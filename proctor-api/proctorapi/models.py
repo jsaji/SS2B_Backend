@@ -66,7 +66,7 @@ class Exam(db.Model):
 
     exam_recordings = relationship('ExamRecording', uselist=False, backref="exams")
 
-    def __init__(self, exam_name, subject_id, login_code, start_date, end_date, duration):
+    def __init__(self, exam_name, subject_id, login_code, start_date, end_date, duration, **kwargs):
         self.exam_name = exam_name
         self.subject_id = subject_id
         self.login_code = login_code
@@ -77,6 +77,7 @@ class Exam(db.Model):
     def to_dict(self):
         return {
             'exam_id':self.exam_id,
+            'exam_name':self.exam_name,
             'subject_id':self.subject_id,
             'login_code':self.login_code,
             'start_date':self.start_date,
