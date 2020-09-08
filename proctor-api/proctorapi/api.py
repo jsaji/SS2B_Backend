@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import exc
 from functools import wraps
 from .models import db, User, Exam, ExamRecording, ExamWarning
+from services.misc import confirm_examiner, InvalidPassphrase
 import jwt
 import json
 
@@ -26,12 +27,19 @@ def register():
     try:
         data = request.get_json()
         user = User(**data)
+        if data.get('examiner_passphrase'):
+            is_examiner = confirm_examiner(data['examiner_passphrase'])
+            if not is_examiner:
+                raise InvalidPassphrase()
+            user.is_examiner = True
         db.session.add(user)
         db.session.commit()
         return jsonify(user.to_dict()), 201
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
+    except InvalidPassphrase as e:
+        return jsonify({ 'message': e.args }), 400
 
 
 @api.route('/login', methods=('POST',))
@@ -47,9 +55,9 @@ def login():
         'iat':str(datetime.utcnow()),
         'exp': str(datetime.utcnow() + timedelta(minutes=30))},
         current_app.config['SECRET_KEY'])
-    student_id = User.query.filter_by(email=data['email']).first().student_id
-    is_admin = User.query.filter_by(email=data['email']).first().is_admin
-    return jsonify({ 'student_id': student_id , 'is_admin': is_admin, 'token': token.decode('UTF-8') }), 200
+    user_id = data['user_id']
+    is_admin = User.query.filter_by(user_id=data['user_id']).first().is_admin
+    return jsonify({ 'user_id': user_id , 'is_admin': is_admin, 'token': token.decode('UTF-8') }), 200
 
 @api.route('/examiner/exam/create', methods=('POST',))
 def create_exam():

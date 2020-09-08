@@ -21,36 +21,36 @@ class User(db.Model):
     first_name = db.Column(db.String(191), nullable=False)
     last_name = db.Column(db.String(191), nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    confirm_examiner = db.Column(db.String(255), nullable=True)
+    is_examiner = db.Column(db.Integer)
     auth_image = db.Column(db.String(255), nullable = True)
     created_date = db.Column(db.DateTime, default=datetime.utcnow())
     updated_date = db.Column(db.DateTime, default=datetime.utcnow())
     
     exam_recordings = relationship("ExamRecording", backref="users")
 
-    def __init__(self, user_id, first_name, last_name, password, confirm_examiner):
+    def __init__(self, user_id, first_name, last_name, password, **kwargs):
         self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
         self.password = generate_password_hash(password, method='sha256')
-        self.confirm_examiner = generate_password_hash(confirm_examiner, method='sha256')
+        self.is_examiner = 0
     
     @classmethod
     def authenticate(cls, **kwargs):
-        email = kwargs.get('email')
+        user_id = kwargs.get('user_id')
         password = kwargs.get('password')
   
-        if not email or not password:
+        if not user_id or not password:
             return None
 
-        user = cls.query.filter_by(email=email).first()
+        user = cls.query.filter_by(user_id=user_id).first()
         if not user or not check_password_hash(user.password, password):
             return None
 
         return user
 
     def to_dict(self):
-        return dict(id=self.user_id, email=self.email)
+        return dict(id=self.user_id)
 
 
 class Exam(db.Model):
