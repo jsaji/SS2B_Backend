@@ -20,12 +20,18 @@ api = Blueprint('api', __name__)
 
 @api.route('/')
 def index():
+    """
+    API health check
+    """
     response = { 'Status': "API is up and running!" }
     return make_response(jsonify(response), 200)
 
 
 @api.route('/register', methods=('POST',))
 def register():
+    """
+    Register new users, examiners or examineers
+    """
     try:
         data = request.get_json()
         pre_init_check(required_fields['user'], **data)
@@ -47,6 +53,9 @@ def register():
 
 @api.route('/login', methods=('POST',))
 def login():
+    """
+    Login for existing users
+    """
     data = request.get_json()
     user = User.authenticate(**data)
 
@@ -64,6 +73,9 @@ def login():
 
 @api.route('/examiner/exam/create', methods=('POST',))
 def create_exam():
+    """
+    Creates new exam record
+    """
     try:
         data = request.get_json()
         code_found = False
@@ -87,22 +99,31 @@ def create_exam():
 
 @api.route('/examiner/exam', methods=('GET',))
 def get_exam():
+    """
+    Gets existing exam records, can be filtered with exam_id and login_code.
+    Returned results are limited by results_length and page_number.
+    """
     try:
         # Gets exam by exam_id or login_code if specified or gets all
-        exam_id = request.args.get('exam_id', default=-1, type=int)
-        login_code = request.args.get('login_code', default='null')
+        exam_id = request.args.get('exam_id', default=None, type=int)
+        login_code = request.args.get('login_code', default=None)
 
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
 
+        if page_number < 1:
+            page_number = 1
+        if results_length < 1 or results_length > 100:
+            results_length = 25
+        
         results = None
-        if exam_id == -1 and login_code == 'null':
+        if not exam_id and not login_code:
             results = Exam.query.all()
         else:
-            if exam_id != -1:
+            if exam_id:
                 results = Exam.query.filter_by(exam_id=exam_id).first()
-            elif login_code != 'null':
-                results = Exam.query.filter_by(login_code=login_code).first()
+            elif login_code:
+                results = Exam.query.filter(Exam.login_code.startswith(login_code)).all()
             if results is None:
                 return jsonify({'message':'Exam not found'}), 404
 
@@ -121,6 +142,9 @@ def get_exam():
     
 @api.route('/examiner/exam/update', methods=('POST',))
 def update_exam(): #arpita to do
+    """
+    Updates an existing exam record, dependent on whether it has already started
+    """
     try:
         print("hola")
         # try get data
@@ -134,6 +158,9 @@ def update_exam(): #arpita to do
 
 @api.route('/examiner/exam/delete/<int:exam_id>', methods=('DELETE',))
 def delete_exam(): #arpita to do
+    """
+    Deletes an existing exam record, dependent on whether it has already started
+    """
     try:
         print("hola")
         # try get existing exam
@@ -147,6 +174,9 @@ def delete_exam(): #arpita to do
 
 @api.route('/examinee/exam_recording/create', methods=('POST',))
 def create_exam_recording():
+    """
+    Creates new exam recording record
+    """
     try:
         data = request.get_json()
         pre_init_check(required_fields['examrecording'], **data)
@@ -157,18 +187,19 @@ def create_exam_recording():
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
-        #db.session.rollback()
+        db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examinee/exam_recording', methods=('GET',))
 def get_exam_recording():
     """
-    Gets exam recordings - can filter by user_id, exam_id. Returned results are limited by results_length and page_number.
+    Gets exam recordings, can be filtered by user_id, exam_id
+    Returned results are limited by results_length and page_number.
     """
     try:
         # Obtains parameters
-        user_id = request.args.get('user_id', default=0, type=int)
-        exam_id = request.args.get('exam_id', default=0, type=int)
+        user_id = request.args.get('user_id', default=None, type=int)
+        exam_id = request.args.get('exam_id', default=None, type=int)
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
 
@@ -207,6 +238,9 @@ def get_exam_recording():
     
 @api.route('/examinee/exam_recording/update', methods=('POST',))
 def update_exam_recording():
+    """
+    Updates existing exam recording record, limited by the parameter action (start, end, video_link)
+    """
     try:
         
         # Gets action, either start or end
@@ -215,7 +249,8 @@ def update_exam_recording():
         data = request.json()
         # Preliminary checks
         if not data.get('exam_recording_id'):
-            return jsonify({'message':'No exam_recording_id included in payload'}), 404
+            return jsonify({'message':'No exam_recording_id included in payload'}), 400
+        
         exam_recording_id = data['exam_recording_id']
         exam_recording = ExamRecording.query.get(exam_recording_id)
         if exam_recording is None:
@@ -226,6 +261,10 @@ def update_exam_recording():
             exam_recording.time_started = datetime.utcnow()
         elif action == 'end':
             exam_recording.time_ended = datetime.utcnow()
+        elif action == 'video_link':
+            if not data.get('video_link'):
+                return jsonify({'message':'No video_link included in payload'}), 400
+            exam_recording.video_link = data['video_link']
         else:
             return jsonify({'message':'Include parameter action: start, end'}), 400
         
@@ -236,45 +275,75 @@ def update_exam_recording():
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examiner/exam_recording/delete/<int:user_id>/<int:exam_id>', methods=('DELETE',))
-def delete_exam_recording(user_id, exam_id): 
+@api.route('/examiner/exam_recording/delete/<int:exam_recording_id>', methods=('DELETE',))
+def delete_exam_recording(exam_recording_id):
+    """
+    Deletes existing exam recording record.
+    """
     try:
-        # try get existing exam recording
-        # check if we're allowed to delete it
-        # if yes,
-        # return successful message
-        return '', 204
+        exam_recording = ExamRecording.query.get(exam_recording_id)
+        if exam:
+            db.session.delete(exam_recording)
+            db.session.commit()
+            return '', 204
+        return jsonify({'message':'Exam recording with id {} could not be found'}), 404
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning/create', methods=('POST',))
 def create_exam_warning():
+    """
+    Creates new exam warning record
+    """
     try:
         data = request.get_json()
         pre_init_check(required_fields['examwarning'], **data)
-        examWarning = ExamWarning(**data)
-        db.session.add(examWarning)
+        exam_warning = ExamWarning(**data)
+        db.session.add(exam_warning)
         db.session.commit()
-        return examWarning.to_dict(), 201
+        return jsonify(exam_warning.to_dict()), 201
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
-        #db.session.rollback()
+        db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning', methods=('GET',))
 def get_exam_warning():
+    """
+    Gets existing exam warning records, can be filtered with exam_warning_id, exam_recording_id, period_start and period_end.
+    Returned results are limited by results_length and page_number.
+    """
     try:
-        exam_warning_id = request.args.get('exam_warning_id', default=-1, type=int)
-        if exam_warning_id==-1:
-            return jsonify({ 'message': 'Parameter exam_warning_id is required' }), 404
+        exam_warning_id = request.args.get('exam_warning_id', default=None, type=int)
+        exam_recording_id = request.args.get('exam_recording_id', default=None, type=int)
+        period_start = request.args.get('period_start', default=None, type=datetime)
+        period_end = request.args.get('period_end', default=None, type=datetime)
+        page_number = request.args.get('page_number', default=1, type=int)
+        results_length = request.args.get('results_length', default=25, type=int)
 
-        exam_warning = ExamWarning.query.get('exam_warning_id')
-        if exam_warning is None:
-            return jsonify({ 'message':'Exam warning with exam_warning_id {} not found'.format(exam_warning_id)}), 404
+        if page_number < 1:
+            page_number = 1
+        if results_length < 1 or results_length > 100:
+            results_length = 25
 
-        return jsonify(exam_warning.to_dict()), 200
+        if exam_warning_id:
+            results = ExamWarning.query.filter_by(exam_warning_id=exam_warning_id)
+        else:
+            if exam_warning_id:
+                results = ExamWarning.query.filter_by(exam_recording_id=exam_recording_id)
+            if period_start:
+                results = ExamWarning.query.filter(ExamWarning.warning_time >= period_start)
+            if period_end:
+                results = ExamWarning.query.filter(ExamWarning.warning_time <= period_end)
+
+        results_end_index = page_number*results_length
+        total_pages = math.ceil(len(results)/results_length)
+        results = results[results_end_index-results_length:results_end_index]
+        exam_warnings = [r.to_dict() for r in results]
+
+        return jsonify({'exam_warnings':exam_warnings, 'total_pages':total_pages}), 200
     except exc.SQLAlchemyError as e:
         #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -282,6 +351,9 @@ def get_exam_warning():
     
 @api.route('/examiner/exam_warning/update', methods=('POST',))
 def update_exam_warning(): #arpita to do
+    """
+    Updates existing exam warning record.
+    """
     try:
         # try get data
         # find the existing model
@@ -294,6 +366,9 @@ def update_exam_warning(): #arpita to do
 
 @api.route('/examiner/exam_warning/delete', methods=('DELETE',))
 def delete_exam_warning(): #arpita to do
+    """
+    Deletes existing exam warning record.
+    """
     try:
         exam_warning_id = request.args.get('exam_warning_id', default=-1, type=int)
         if exam_warning_id==-1:
@@ -310,60 +385,41 @@ def delete_exam_warning(): #arpita to do
 
 @api.route('/examiner/examinee', methods=('GET',))
 def get_examinee():
+    """
+    Gets existing user records, can be filtered with user_id, first_name and last_name.
+    Returned results are limited by results_length and page_number.
+    """
     try:
         # Potential parameters to filter by
-        user_id = request.args.get('user_id', default=-1, type=int)
-        exam_id = request.args.get('exam_id', default=-1, type=int)
-        in_progress = request.args.get('in_progress', default=None, type=bool)
-        #period_start = request.args.get('period_start', default=None, type=toDate)
-        #period_end = request.args.get('period_end', default=None, type=datetime)
-        has_warnings = request.args.get('has_warnings', default=None, type=bool)
+        user_id = request.args.get('user_id', default=None, type=int)
+        first_name = request.args.get('first_name', default=None)
+        last_name = request.args.get('last_name', default=None)
 
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
 
-        
+        if page_number < 1:
+            page_number = 1
+        if results_length < 1 or results_length > 100:
+            results_length = 25
 
-        # Base query
-        results = db.session.query(
-            User, ExamRecording, Exam, ExamWarning
-            ).filter(
-                User.user_id == ExamRecording.user_id
-            ).filter(
-                ExamRecording.exam_id == Exam.exam_id
-            ).filter(
-                ExamRecording.exam_recording_id == ExamWarning.exam_recording_id
-            )
-        
-        if user_id != -1:
-            results = results.filter_by(User.user_id==user_id)
-        if exam_id != -1:
-            results = results.filter_by(Exam.exam_id==exam_id)
-        '''
-        if in_progress is not None:
-            if in_progress:
-                results = results.filter_by(ExamRecording.time_started < datetime.utcnow() and ExamRecording.time_ended is None)
-            else:
-                results = results.filter_by(ExamRecording.time_ended is not None)
-        if has_warnings is not None:
-            if has_warnings:
-                results = results.filter_by(ExamWarning.exam_warning_id is not None)
-            else:
-                results = results.filter_by(ExamWarning.exam_warning_id is None)
-        
-        if period_start:
-            results = results.filter_by(ExamRecording.time_started > period_start)
-        if period_end:
-            results = results.filter_by(ExamRecording.time_ended < period_end)
-        '''
+        results = User.query
+                
+        if user_id:
+            results = results.filter_by(user_id=user_id)
+        else:
+            if first_name:
+                results = results.filter(User.first_name.startswith(first_name))
+            if last_name:
+                results = results.filter(User.last_name.startswith(last_name))
+        results = results.all()
+
         results_end_index = page_number*results_length
         total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index - results_length:results_end_index]
-        return_payload = [[r[0].to_dict(), r[1].to_dict(), r[2].to_dict()] for r in results]
-
-        return jsonify(return_payload), 200
+        users = [r.to_dict() for r in results]
+        return jsonify({'users':users, 'total_pages':total_pages}), 200
     except exc.SQLAlchemyError as e:
-        #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 
