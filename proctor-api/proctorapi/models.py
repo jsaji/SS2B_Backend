@@ -3,7 +3,7 @@ models.py
 - Data classes for the quantumapi application
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
@@ -23,8 +23,8 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     is_examiner = db.Column(db.Integer)
     auth_image = db.Column(db.String(255), nullable = True)
-    created_date = db.Column(db.DateTime, default=datetime.utcnow())
-    updated_date = db.Column(db.DateTime, default=datetime.utcnow())
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_date = db.Column(db.DateTime, default=datetime.utcnow)
     
     exam_recordings = relationship("ExamRecording", backref="users")
 
@@ -60,9 +60,9 @@ class Exam(db.Model):
     exam_name = db.Column(db.String(500), nullable=False)
     subject_id = db.Column(db.Integer)
     login_code = db.Column(db.String(255), nullable=False)
-    start_date = db.Column(db.DateTime, default=datetime.utcnow())
-    end_date = db.Column(db.DateTime, default=datetime.utcnow())
-    duration = db.Column(db.Integer)
+    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    end_date = db.Column(db.DateTime, default=datetime.utcnow)
+    duration = db.Column(db.Time, default="02:30:00")
     document_link = db.Column(db.String(255), nullable=True)
 
     exam_recordings = relationship('ExamRecording', uselist=False, backref="exams")
@@ -84,7 +84,8 @@ class Exam(db.Model):
             'login_code':self.login_code,
             'start_date':self.start_date,
             'end_date':self.end_date,
-            'duration':self.duration
+            'duration':self.duration.strftime("%H:%M:%S"),
+            'document_link':self.document_link
         }
 
 
@@ -122,7 +123,7 @@ class ExamWarning(db.Model):
     
     warning_id = db.Column(INTEGER(unsigned=True), primary_key=True)
     exam_recording_id = db.Column(INTEGER(unsigned=True), db.ForeignKey('examRecordings.exam_recording_id'), nullable=False)
-    warning_time = db.Column(db.DateTime, default=datetime.utcnow())
+    warning_time = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String(500), nullable=False)
 
     def __init__(self, exam_recording_id, warning_time, description):

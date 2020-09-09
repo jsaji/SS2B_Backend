@@ -7,6 +7,7 @@ api.py
 from flask import Blueprint, jsonify, request, make_response, current_app
 from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
+from dateutil import parser
 from sqlalchemy import exc
 from functools import wraps
 from .models import db, User, Exam, ExamRecording, ExamWarning
@@ -71,6 +72,7 @@ def create_exam():
             if not code_exists:
                 data['login_code'] = potential_login_code
                 break
+        data['duration'] = parser.parse(data['duration']).time()
         exam = Exam(**data)
         db.session.add(exam)
         db.session.commit()
