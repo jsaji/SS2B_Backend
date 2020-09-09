@@ -44,11 +44,15 @@ def register():
         db.session.add(user)
         db.session.commit()
         return jsonify(user.to_dict()), 201
-    except MissingModelFields or InvalidPassphrase as e:
+    except (MissingModelFields, InvalidPassphrase) as e:
         return jsonify({ 'message': e.args }), 400
+    except exc.IntegrityError:
+        db.session.rollback()
+        return jsonify({ 'message': 'User with user_id {} exists.'.format(data['user_id']) }), 409
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
+    
 
 
 @api.route('/login', methods=('POST',))
@@ -63,13 +67,13 @@ def login():
         return jsonify({ 'message': 'Invalid credentials', 'authenticated': False }), 401
 
     token = jwt.encode({
-        'sub': user.email,
+        'sub': user.user_id,
         'iat':str(datetime.utcnow()),
         'exp': str(datetime.utcnow() + timedelta(minutes=30))},
         current_app.config['SECRET_KEY'])
     user_id = data['user_id']
-    is_admin = User.query.filter_by(user_id=data['user_id']).first().is_admin
-    return jsonify({ 'user_id': user_id , 'is_admin': is_admin, 'token': token.decode('UTF-8') }), 200
+    user = User.query.get(user_id)
+    return jsonify({ 'user': user.to_dict(), 'token': token.decode('UTF-8') }), 200
 
 @api.route('/examiner/exam/create', methods=('POST',))
 def create_exam():
@@ -78,6 +82,7 @@ def create_exam():
     """
     try:
         data = request.get_json()
+        pre_init_check(required_fields['exam'], **data)
         code_found = False
         while not code_found:
             potential_login_code = generate_exam_code()
@@ -86,7 +91,6 @@ def create_exam():
                 data['login_code'] = potential_login_code
                 break
         data['duration'] = parser.parse(data['duration']).time()
-        pre_init_check(required_fields['exam'], **data)
         exam = Exam(**data)
         db.session.add(exam)
         db.session.commit()
@@ -107,7 +111,8 @@ def get_exam():
         # Gets exam by exam_id or login_code if specified or gets all
         exam_id = request.args.get('exam_id', default=None, type=int)
         login_code = request.args.get('login_code', default=None)
-
+        subject_id = request.args.get('subject_id', default=None)
+        exam_name = request.args.get('exam_name', default=None)
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
 
@@ -116,16 +121,18 @@ def get_exam():
         if results_length < 1 or results_length > 100:
             results_length = 25
         
-        results = None
-        if not exam_id and not login_code:
-            results = Exam.query.all()
-        else:
-            if exam_id:
-                results = Exam.query.filter_by(exam_id=exam_id).first()
-            elif login_code:
-                results = Exam.query.filter(Exam.login_code.startswith(login_code)).all()
-            if results is None:
-                return jsonify({'message':'Exam not found'}), 404
+        results = Exam.query
+        
+        if exam_id:
+            results = results.filter_by(exam_id=exam_id)
+        if subject_id:
+            results = results.filter_by(subject_id=subject_id)
+        if login_code:
+            results = results.filter(Exam.login_code.startswith(login_code))
+        if exam_name:
+            results = results.filter(Exam.exam_name.startswith(exam_name))
+        
+        results = results.all()
 
         # Calculates total number of pages of results
         results_end_index = page_number*results_length
@@ -200,6 +207,14 @@ def get_exam_recording():
         # Obtains parameters
         user_id = request.args.get('user_id', default=None, type=int)
         exam_id = request.args.get('exam_id', default=None, type=int)
+        in_progress = request.args.get('in_progress', default=None, type=bool)
+        period_start = request.args.get('period_start', default=timedelta(days=10))
+        period_end = request.args.get('period_end', default=timedelta(days=10))
+        if period_start == timedelta(days=10):
+            period_start = None
+        if period_end == timedelta(days=10):
+            period_end = None
+        
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
 
@@ -211,19 +226,28 @@ def get_exam_recording():
         
         results_end_index = page_number*results_length
 
+        results = ExamRecording.query
         if user_id and exam_id:
             # If user_id and exam_id are present, find the specific exam recording
-            results = ExamRecording.query.filter_by(user_id=user_id, exam_id=exam_id).first()
-        elif exam_id:
+            results = results.filter_by(user_id=user_id, exam_id=exam_id)
+        if exam_id:
             # If just exam_id is present, find the exam recordings associated with exam_id
-            results = ExamRecording.query.filter_by(user_id=user_id, exam_id=exam_id).order_by(ExamRecording.time_started.desc()).all()
-        elif user_id:
+            results = results.filter_by(user_id=user_id, exam_id=exam_id).order_by(ExamRecording.time_started.desc())
+        if user_id:
             # If just user_id is present, find the exam recordings associated with user_id
-            results = ExamRecording.query.filter_by(user_id=user_id).order_by(ExamRecording.time_started.desc()).all()
-        else:
-            # Else get all exam recordings
-            results = ExamRecording.query.order_by(ExamRecording.time_started.desc()).all()
+            results = results.filter_by(user_id=user_id).order_by(ExamRecording.time_started.desc())
+        if in_progress is not None:
+            # If in_progress is defined, get ones that are if true, or past ones if false
+            if in_progress:
+                results = results.filter(ExamRecording.time_ended is None)
+            else:
+                results = results.filter(ExamRecording.time_ended is not None)
+        if period_start:
+            results = results.filter(ExamRecording.time_started >= period_start)
+        if period_end:
+            results = results.filter(ExamRecording.time_ended <= period_end)
 
+        results = results.order_by(ExamRecording.time_started.desc()).all()
         # Reduces number of results and serialises into string format for payload
         total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index - results_length:results_end_index]
@@ -282,7 +306,7 @@ def delete_exam_recording(exam_recording_id):
     """
     try:
         exam_recording = ExamRecording.query.get(exam_recording_id)
-        if exam:
+        if exam_recording:
             db.session.delete(exam_recording)
             db.session.commit()
             return '', 204
@@ -318,26 +342,33 @@ def get_exam_warning():
     try:
         exam_warning_id = request.args.get('exam_warning_id', default=None, type=int)
         exam_recording_id = request.args.get('exam_recording_id', default=None, type=int)
-        period_start = request.args.get('period_start', default=None, type=datetime)
-        period_end = request.args.get('period_end', default=None, type=datetime)
+        period_start = request.args.get('period_start', default=timedelta(days=10))
+        period_end = request.args.get('period_end', default=timedelta(days=10))
+        
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
+
+        if period_start == timedelta(days=10):
+            period_start = None
+        if period_end == timedelta(days=10):
+            period_end = None
 
         if page_number < 1:
             page_number = 1
         if results_length < 1 or results_length > 100:
             results_length = 25
-
+        
+        results = ExamWarning.query
         if exam_warning_id:
-            results = ExamWarning.query.filter_by(exam_warning_id=exam_warning_id)
-        else:
-            if exam_warning_id:
-                results = ExamWarning.query.filter_by(exam_recording_id=exam_recording_id)
-            if period_start:
-                results = ExamWarning.query.filter(ExamWarning.warning_time >= period_start)
-            if period_end:
-                results = ExamWarning.query.filter(ExamWarning.warning_time <= period_end)
+            results = results.filter_by(exam_warning_id=exam_warning_id)
+        if exam_recording_id:
+            results = results.filter_by(exam_recording_id=exam_recording_id)
+        if period_start:
+            results = results.filter(ExamWarning.warning_time >= period_start)
+        if period_end:
+            results = results.filter(ExamWarning.warning_time <= period_end)
 
+        results = results.all()
         results_end_index = page_number*results_length
         total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index-results_length:results_end_index]
@@ -407,11 +438,10 @@ def get_examinee():
                 
         if user_id:
             results = results.filter_by(user_id=user_id)
-        else:
-            if first_name:
-                results = results.filter(User.first_name.startswith(first_name))
-            if last_name:
-                results = results.filter(User.last_name.startswith(last_name))
+        if first_name:
+            results = results.filter(User.first_name.startswith(first_name))
+        if last_name:
+            results = results.filter(User.last_name.startswith(last_name))
         results = results.all()
 
         results_end_index = page_number*results_length

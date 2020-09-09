@@ -22,7 +22,7 @@ required_fields = {'user':['user_id', 'first_name', 'last_name', 'password'],
 class User(db.Model):
     __tablename__ = 'users'
 
-    user_id = db.Column(INTEGER(unsigned=True), primary_key=True, unique=True, autoincrement=False)
+    user_id = db.Column(INTEGER(unsigned=True), primary_key=True, autoincrement=False)
     first_name = db.Column(db.String(191), nullable=False)
     last_name = db.Column(db.String(191), nullable=False)
     password = db.Column(db.String(255), nullable=False)
@@ -131,7 +131,7 @@ class ExamRecording(db.Model):
 class ExamWarning(db.Model):
     __tablename__ = 'examWarnings'
     
-    warning_id = db.Column(INTEGER(unsigned=True), primary_key=True)
+    exam_warning_id = db.Column(INTEGER(unsigned=True), primary_key=True)
     exam_recording_id = db.Column(INTEGER(unsigned=True), db.ForeignKey('examRecordings.exam_recording_id'), nullable=False)
     warning_time = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String(500), nullable=False)
@@ -143,7 +143,7 @@ class ExamWarning(db.Model):
 
     def to_dict(self):
         return {
-            'warning_id':self.warning_id,
+            'exam_warning_id':self.exam_warning_id,
             'exam_recording_id':self.exam_recording_id,
             'warning_time':self.warning_time,
             'description':self.description
