@@ -13,6 +13,7 @@ from .models import db, User, Exam, ExamRecording, ExamWarning
 from .services.misc import generate_exam_code, confirm_examiner, InvalidPassphrase
 import jwt
 import json
+import math
 
 api = Blueprint('api', __name__)
 
@@ -78,14 +79,35 @@ def create_exam():
         #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examiner/exam/<int:exam_id>', methods=('GET',))
-def get_exam(exam_id):
+@api.route('/examiner/exam', methods=('GET',))
+def get_exam():
     try:
-        # Gets exam by exam_id, returns 404 if not found
-        exam = Exam.query.filter_by(exam_id=exam_id).first()
-        if exam is None:
-            return jsonify({'message':'Exam with exam_id {} not found'.format(exam_id)}), 404
-        return jsonify(exam.to_dict()), 200
+        # Gets exam by exam_id or login_code if specified or gets all
+        exam_id = request.args.get('exam_id', default=-1, type=int)
+        login_code = request.args.get('login_code', default='null')
+
+        page_number = request.args.get('page_number', default=1, type=int)
+        results_length = request.args.get('results_length', default=25, type=int)
+
+        results = None
+        if exam_id == -1 and login_code == 'null':
+            results = Exam.query.all()
+        else:
+            if exam_id != -1:
+                results = Exam.query.filter_by(exam_id=exam_id).first()
+            elif login_code != 'null':
+                results = Exam.query.filter_by(login_code=login_code).first()
+            if results is None:
+                return jsonify({'message':'Exam not found'}), 404
+
+        # Calculates total number of pages of results
+        results_end_index = page_number*results_length
+        total_pages = math.ceil(len(results)/results_length)
+        results = results[results_end_index-results_length:results_end_index]
+        exam_dict = [r.to_dict() for r in results]
+        payload = {'exams':exam_dict, 'total_pages': total_pages}
+
+        return jsonify(payload), 200
 
     except exc.SQLAlchemyError as e:
         db.session.rollback()
@@ -120,15 +142,11 @@ def delete_exam(): #arpita to do
 @api.route('/examinee/exam_recording/create', methods=('POST',))
 def create_exam_recording():
     try:
-
         data = request.get_json()
         examRecording = ExamRecording(**data)
-        print(examRecording.to_dict())
-        '''
         db.session.add(examRecording)
         db.session.commit()
-        '''
-        return '', 201
+        return jsonify(examRecording.to_dict()), 201
     except exc.SQLAlchemyError as e:
         #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -164,13 +182,14 @@ def get_exam_recording():
             results = ExamRecording.query.filter_by(user_id=user_id).order_by(ExamRecording.time_started.desc()).all()
         else:
             # Else get all exam recordings
-            results = ExamRecording.query.limit(results_end_index).order_by(ExamRecording.time_started.desc()).all()
+            results = ExamRecording.query.order_by(ExamRecording.time_started.desc()).all()
 
         # Reduces number of results and serialises into string format for payload
+        total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index - results_length:results_end_index]
         exam_recordings = [r.to_dict() for r in results]
 
-        payload = {'exam_recordings':exam_recordings}
+        payload = {'exam_recordings':exam_recordings, 'total_pages':total_pages}
         return jsonify(payload), 200
 
     except exc.SQLAlchemyError as e:
@@ -287,14 +306,14 @@ def get_examinee():
         user_id = request.args.get('user_id', default=-1, type=int)
         exam_id = request.args.get('exam_id', default=-1, type=int)
         in_progress = request.args.get('in_progress', default=None, type=bool)
-        period_start = request.args.get('period_start', default=None, type=toDate)
-        period_end = request.args.get('period_end', default=None, type=datetime)
+        #period_start = request.args.get('period_start', default=None, type=toDate)
+        #period_end = request.args.get('period_end', default=None, type=datetime)
         has_warnings = request.args.get('has_warnings', default=None, type=bool)
 
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
 
-        results_end_index = page_number*results_length
+        
 
         # Base query
         results = db.session.query(
@@ -311,6 +330,7 @@ def get_examinee():
             results = results.filter_by(User.user_id==user_id)
         if exam_id != -1:
             results = results.filter_by(Exam.exam_id==exam_id)
+        '''
         if in_progress is not None:
             if in_progress:
                 results = results.filter_by(ExamRecording.time_started < datetime.utcnow() and ExamRecording.time_ended is None)
@@ -321,13 +341,16 @@ def get_examinee():
                 results = results.filter_by(ExamWarning.exam_warning_id is not None)
             else:
                 results = results.filter_by(ExamWarning.exam_warning_id is None)
+        
         if period_start:
             results = results.filter_by(ExamRecording.time_started > period_start)
         if period_end:
             results = results.filter_by(ExamRecording.time_ended < period_end)
-
+        '''
+        results_end_index = page_number*results_length
+        total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index - results_length:results_end_index]
-        return_payload = [r.to_dict() for r in results]
+        return_payload = [[r[0].to_dict(), r[1].to_dict(), r[2].to_dict()] for r in results]
 
         return jsonify(return_payload), 200
     except exc.SQLAlchemyError as e:

@@ -98,9 +98,12 @@ class ExamRecording(db.Model):
     
     warnings = relationship("ExamWarning", backref='examRecordings')
 
-    def __init__(self, exam_id, user_id):
+    def __init__(self, exam_id, user_id, time_started=None, time_ended=None, video_link=None):
         self.exam_id = exam_id
         self.user_id = user_id
+        self.time_started = time_started
+        self.time_ended = time_ended
+        self.video_link = video_link
 
     def to_dict(self):
         return {
