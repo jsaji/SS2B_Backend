@@ -63,16 +63,18 @@ class Exam(db.Model):
     start_date = db.Column(db.DateTime, default=datetime.utcnow())
     end_date = db.Column(db.DateTime, default=datetime.utcnow())
     duration = db.Column(db.Integer)
+    document_link = db.Column(db.String(255), nullable=True)
 
     exam_recordings = relationship('ExamRecording', uselist=False, backref="exams")
 
-    def __init__(self, exam_name, subject_id, login_code, start_date, end_date, duration, **kwargs):
+    def __init__(self, exam_name, subject_id, login_code, start_date, end_date, duration, document_link=None, **kwargs):
         self.exam_name = exam_name
         self.subject_id = subject_id
         self.login_code = login_code
         self.start_date = start_date
         self.end_date = end_date
         self.duration = duration
+        self.document_link = document_link
 
     def to_dict(self):
         return {
