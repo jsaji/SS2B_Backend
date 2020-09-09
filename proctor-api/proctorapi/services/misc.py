@@ -4,6 +4,14 @@ import string
 
 charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!0123456789'
 
+def pre_init_check(required_fields, **kwargs):
+        missing_fields = []
+        for field in required_fields:
+            if not kwargs.get(field):
+                missing_fields.append(field)
+        if len(missing_fields):
+            raise MissingModelFields(missing_fields)
+
 def generate_exam_code(allowed_chars=charset, str_size=12):
     return ''.join(random.choice(allowed_chars) for x in range(str_size))
 
@@ -21,3 +29,7 @@ def confirm_examiner(entered_passphrase):
 class InvalidPassphrase(Exception):
     def __init__(self):
         super().__init__("Invalid examiner passphrase")
+
+class MissingModelFields(Exception):
+    def __init__(self, field):
+        super().__init__("The model is missing {} field(s)".format(field))

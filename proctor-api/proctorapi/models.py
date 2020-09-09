@@ -13,6 +13,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
+required_fields = {'user':['user_id', 'first_name', 'last_name', 'password'],
+                    'exam':['exam_name', 'subject_id', 'start_date', 'end_date', 'duration'],
+                    'examrecording':['exam_id', 'user_id'],
+                    'examwarning':['exam_recording_id', 'warning_time', 'description']
+                    }
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -50,7 +55,12 @@ class User(db.Model):
         return user
 
     def to_dict(self):
-        return dict(id=self.user_id)
+        return {
+            'user_id':self.user_id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'is_examiner': self.is_examiner
+        }
 
 
 class Exam(db.Model):

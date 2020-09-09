@@ -10,8 +10,8 @@ from datetime import datetime, timedelta
 from dateutil import parser
 from sqlalchemy import exc
 from functools import wraps
-from .models import db, User, Exam, ExamRecording, ExamWarning
-from .services.misc import generate_exam_code, confirm_examiner, InvalidPassphrase
+from .models import db, User, Exam, ExamRecording, ExamWarning, required_fields
+from .services.misc import generate_exam_code, confirm_examiner, pre_init_check, InvalidPassphrase, MissingModelFields
 import jwt
 import json
 import math
@@ -28,6 +28,7 @@ def index():
 def register():
     try:
         data = request.get_json()
+        pre_init_check(required_fields['user'], **data)
         user = User(**data)
         if data.get('examiner_passphrase'):
             is_examiner = confirm_examiner(data['examiner_passphrase'])
@@ -37,11 +38,11 @@ def register():
         db.session.add(user)
         db.session.commit()
         return jsonify(user.to_dict()), 201
+    except MissingModelFields or InvalidPassphrase as e:
+        return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
-    except InvalidPassphrase as e:
-        return jsonify({ 'message': e.args }), 400
 
 
 @api.route('/login', methods=('POST',))
@@ -73,12 +74,15 @@ def create_exam():
                 data['login_code'] = potential_login_code
                 break
         data['duration'] = parser.parse(data['duration']).time()
+        pre_init_check(required_fields['exam'], **data)
         exam = Exam(**data)
         db.session.add(exam)
         db.session.commit()
         return jsonify(exam.to_dict()), 201
+    except MissingModelFields as e:
+        return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
-        #db.session.rollback()
+        db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam', methods=('GET',))
@@ -145,10 +149,13 @@ def delete_exam(): #arpita to do
 def create_exam_recording():
     try:
         data = request.get_json()
+        pre_init_check(required_fields['examrecording'], **data)
         examRecording = ExamRecording(**data)
         db.session.add(examRecording)
         db.session.commit()
         return jsonify(examRecording.to_dict()), 201
+    except MissingModelFields as e:
+        return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
         #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -245,13 +252,13 @@ def delete_exam_recording(user_id, exam_id):
 def create_exam_warning():
     try:
         data = request.get_json()
+        pre_init_check(required_fields['examwarning'], **data)
         examWarning = ExamWarning(**data)
-        print(examWarning.to_dict())
-        '''
         db.session.add(examWarning)
         db.session.commit()
-        '''
-        return '', 201
+        return examWarning.to_dict(), 201
+    except MissingModelFields as e:
+        return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
         #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
