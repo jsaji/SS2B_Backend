@@ -12,10 +12,11 @@ def populate(endpoint, file_name):
 
     with open(data_file, 'r') as data:
         items = json.load(data)
-        for item in items:
-            print(item)
+        total_items = len(items)
+        for i, item in enumerate(items):
             r = requests.post(base_url+endpoint, json=item)
-            print(r.status_code)
+            print('{0:.0%} of {1} rows added'.format(i/total_items, total_items), end='\r')
+    print()
 
 def populate_users():
     populate('/register', 'user_data.json')
@@ -24,49 +25,66 @@ def populate_exams():
     populate('/examiner/exam/create', 'exam_data.json')
 
 def populate_exam_recordings():
-    users_file = os.path.join(script_dir, 'user_data.json')
-    exams_file = os.path.join(script_dir, 'exam_data.json')
-    users_data = open(users_file, 'r')
-    exams_data = open(exams_file, 'r')
-    exams = json.load(exams_data)
-    users = json.load(users_data)
+    populate('/examinee/exam_recording/create', 'exam_recording_data.json')
+
+def populate_exam_warnings():
+    populate('/examiner/exam_warning/create', 'exam_warning_data.json')
+
+def generate_exam_data(days=10):
+    # Finds JSON file for exams with raw data i.e. no end_date, and datetime is overly precise
+    data_file = os.path.join(script_dir, 'exam_data_raw.json')
+    with open(data_file, 'r') as exam_data:
+        exams = json.load(exam_data)
+        new_file_location = os.path.join(script_dir, 'exam_data.json')
+        with open(new_file_location, 'w') as new_file:
+            for e in exams:
+                # Discards precision of datetime's minutes, seconds & microseconds and rounds to nearest half hour
+                start_date = parser.parse(e['start_date'])
+                discard = timedelta(minutes=start_date.minute%30, seconds=start_date.second, microseconds=start_date.microsecond )
+                start_date -= discard
+                if discard >= timedelta(minutes=15):
+                    start_date += timedelta(minutes=30)
+                # Adds 10 days to start_date to form end_date
+                e['end_date'] = '{}'.format(start_date + timedelta(days=days))
+                e['start_date'] = '{}'.format(start_date)
+            # Saves new JSON file
+            json.dump(exams, new_file, indent="")
+    print(data_file + ' successfully generated!')
+
+def generate_exam_recording_data():
+    exam_recording_json_data = []
+    params = {'results_length': 99}
+    r1 = requests.get(base_url+'/examiner/exam', params=params)
+    r2 = requests.get(base_url+'/examiner/examinee', params=params)
+    exams = r1.json()['exams']
+    users = r2.json()['users']
+    current_datetime = datetime.utcnow()
+    for exam in exams:
+        number_of_users = random.randint(15, 30)
+        random_users = random.sample(range(0, len(users)), number_of_users)
+        for user_index in random_users:
+            user = users[user_index]
+            start_date = parser.parse(exam['start_date'])
+            duration = parser.parse(exam['duration']).time()
+            time_started, time_ended = generate_time_period(start_date, duration)
+            if time_ended <= current_datetime:
+                exam_recording = {'user_id':user['user_id'],
+                                    'exam_id':exam['exam_id'],
+                                    'time_started': time_started,
+                                    'time_ended': time_ended}
+                exam_recording_json_data.append(exam_recording)
     
-    for user in users:
-        random_exams = random.sample(range(0, len(exams)), 30)
-        
-    users_data.close()
-    exams_data.close()
+    data_file = os.path.join(script_dir, 'exam_recording_data.json')
+    with open(data_file, 'w') as new_file:
+        json.dump(exam_recording_json_data, new_file, indent="", default=str)
+    print(data_file + ' successfully generated!')
+            
+def generate_time_period(start_date, duration):
+    offset = [random.randint(1, 20), random.randint(1, 23), random.randint(1, 58), random.randint(1, 58)]
+    duration_scale = [random.uniform(0.6, 1), random.uniform(0, 1)]
+    time_started = start_date + timedelta(days=offset[0], hours=offset[1], minutes=offset[2], seconds=offset[3])
+    time_ended = time_started + timedelta(hours=duration.hour*duration_scale[0], minutes=duration.minute*duration_scale[1])
+    return time_started.replace(tzinfo=None), time_ended.replace(tzinfo=None, microsecond=0)
 
-def add_end_datetime(minutes=0, days=0):
-    if days:
-        # Finds JSON file for exams with raw data i.e. no end_date, and datetime is overly precise
-        data_file = os.path.join(script_dir, 'exam_data_raw.json')
-        with open(data_file, 'r') as exam_data:
-            exams = json.load(exam_data)
-            new_file_location = os.path.join(script_dir, 'exam_data.json')
-            with open(new_file_location, 'w') as new_file:
-                for e in exams:
-                    # Discards precision of datetime's minutes, seconds & microseconds and rounds to nearest half hour
-                    start_date = parser.parse(e['start_date'])
-                    discard = timedelta(minutes=start_date.minute%30, seconds=start_date.second, microseconds=start_date.microsecond )
-                    start_date -= discard
-                    if discard >= timedelta(minutes=15):
-                        start_date += timedelta(minutes=30)
-                    # Adds 10 days to start_date to form end_date
-                    e['end_date'] = '{}'.format(start_date + timedelta(days=days))
-                    e['start_date'] = '{}'.format(start_date)
-                # Saves new JSON file
-                json.dump(exams, new_file, indent="")
-    elif minutes:
-        # Finds JSON file for exam_recordings
-        data_file = os.path.join(script_dir, 'exam_recordings_raw.json')
-        with open(data_file, 'r') as exam_data:
-            exams = json.load(exam_data)
-            new_file_location = os.path.join(script_dir, 'exam_data.json')
-            with open(new_file_location, 'w') as new_file:
-                for e in exams:
-                    start_date = parser.parse(e['start_date'])
-                    e['end_date'] = '{}'.format(start_date + timedelta(days=days))
-                json.dump(exams, new_file, indent="")
-
-populate_exams()
+generate_exam_recording_data()
+populate_exam_recordings()
