@@ -92,8 +92,8 @@ class Exam(db.Model):
             'exam_name':self.exam_name,
             'subject_id':self.subject_id,
             'login_code':self.login_code,
-            'start_date':self.start_date,
-            'end_date':self.end_date,
+            'start_date':self.start_date.strftime("%Y-%m-%d %H:%M:%S"),
+            'end_date':self.end_date.strftime("%Y-%m-%d %H:%M:%S"),
             'duration':self.duration.strftime("%H:%M:%S"),
             'document_link':self.document_link
         }
@@ -123,8 +123,8 @@ class ExamRecording(db.Model):
             'exam_recording_id':self.exam_recording_id,
             'exam_id':self.exam_id,
             'user_id':self.user_id,
-            'time_started':self.time_started,
-            'time_ended':self.time_ended,
+            'time_started':self.time_started.strftime("%Y-%m-%d %H:%M:%S"),
+            'time_ended':self.time_ended.strftime("%Y-%m-%d %H:%M:%S"),
             'video_link':self.video_link
         }
 
@@ -145,6 +145,6 @@ class ExamWarning(db.Model):
         return {
             'exam_warning_id':self.exam_warning_id,
             'exam_recording_id':self.exam_recording_id,
-            'warning_time':self.warning_time,
+            'warning_time':self.warning_time.strftime("%Y-%m-%d %H:%M:%S"),
             'description':self.description
         }
