@@ -53,8 +53,6 @@ def register():
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     
-
-
 @api.route('/login', methods=('POST',))
 def login():
     """
@@ -75,6 +73,7 @@ def login():
     user = User.query.get(user_id)
     return jsonify({ 'user': user.to_dict(), 'token': token.decode('UTF-8') }), 200
 
+
 @api.route('/examiner/exam/create', methods=('POST',))
 def create_exam():
     """
@@ -82,14 +81,18 @@ def create_exam():
     """
     try:
         data = request.get_json()
+        # Checks if data has required fields - throws exception if not
         pre_init_check(required_fields['exam'], **data)
+
         code_found = False
         while not code_found:
+            # Generates unique exam code until one is found that does not already exist
             potential_login_code = generate_exam_code()
             code_exists = Exam.query.filter_by(login_code=potential_login_code).first()
             if not code_exists:
                 data['login_code'] = potential_login_code
                 break
+        # Parses and obtains time component from duration
         data['duration'] = parser.parse(data['duration']).time()
         exam = Exam(**data)
         db.session.add(exam)
@@ -108,11 +111,22 @@ def get_exam():
     Returned results are limited by results_length and page_number.
     """
     try:
-        # Gets exam by exam_id or login_code if specified or gets all
+        # Gets exam by various parameters
         exam_id = request.args.get('exam_id', default=None, type=int)
         login_code = request.args.get('login_code', default=None)
         subject_id = request.args.get('subject_id', default=None)
         exam_name = request.args.get('exam_name', default=None)
+        order_by = request.args.get('order_by', default="start_date").lower()
+        order = request.args.get('order', default="desc").lower()
+
+        period_start = request.args.get('period_start', default=timedelta(days=10))
+        period_end = request.args.get('period_end', default=timedelta(days=10))
+
+        if period_start == timedelta(days=10):
+            period_start = None
+        if period_end == timedelta(days=10):
+            period_end = None
+        
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
 
@@ -123,6 +137,7 @@ def get_exam():
         
         results = Exam.query
         
+        # Filters results
         if exam_id:
             results = results.filter_by(exam_id=exam_id)
         if subject_id:
@@ -131,10 +146,31 @@ def get_exam():
             results = results.filter(Exam.login_code.startswith(login_code))
         if exam_name:
             results = results.filter(Exam.exam_name.startswith(exam_name))
+        if period_start:
+            results = results.filter(Exam.start_date >= period_start)
+        if period_end:
+            results = results.filter(Exam.end_date <= period_end)
+        
+        # Orders results
+        if order_by == 'start_date':
+            if order == 'desc': results = results.order_by(Exam.start_date.desc())
+            else: results = results.order_by(Exam.start_date.asc())
+        elif order_by == 'end_date':
+            if order == 'desc': results = results.order_by(Exam.end_date.desc())
+            else: results = results.order_by(Exam.start_date.asc())
+        elif order_by == "exam_name":
+            if order == 'desc': results = results.order_by(Exam.exam_name.desc())
+            else: results = results.order_by(Exam.exam_name.asc())
+        elif order_by == "login_code":
+            if order == 'desc': results = results.order_by(Exam.login_code.desc())
+            else: results = results.order_by(Exam.login_code.asc())
+        elif order_by == "subject_id":
+            if order == 'desc': results = results.order_by(Exam.subject_id.desc())
+            else: results = results.order_by(Exam.subject_id.asc())
         
         results = results.all()
 
-        # Calculates total number of pages of results
+        # Reduces number of results and serialises
         results_end_index = page_number*results_length
         total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index-results_length:results_end_index]
@@ -179,6 +215,7 @@ def delete_exam(): #arpita to do
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
+
 @api.route('/examinee/exam_recording/create', methods=('POST',))
 def create_exam_recording():
     """
@@ -207,47 +244,48 @@ def get_exam_recording():
         # Obtains parameters
         user_id = request.args.get('user_id', default=None, type=int)
         exam_id = request.args.get('exam_id', default=None, type=int)
-        in_progress = request.args.get('in_progress', default=None, type=bool)
+        in_progress_flag = request.args.get('in_progress', default=None, type=str)
+        in_progress = None
+        if in_progress_flag is not None:
+            in_progress = in_progress_flag.lower() in ('true', '1')
+        order_by = request.args.get('order_by', default="time_started").lower()
+        order = request.args.get('order', default="desc").lower()
+        
         period_start = request.args.get('period_start', default=timedelta(days=10))
         period_end = request.args.get('period_end', default=timedelta(days=10))
-        if period_start == timedelta(days=10):
-            period_start = None
-        if period_end == timedelta(days=10):
-            period_end = None
+        if period_start == timedelta(days=10): period_start = None
+        if period_end == timedelta(days=10): period_end = None
         
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
 
         # Checks for invalid page_number / results_length
-        if page_number < 1:
-            page_number = 1
-        if results_length < 1 or results_length > 100:
-            results_length = 25
+        if page_number < 1: page_number = 1
+        if results_length < 1 or results_length > 100: results_length = 25
         
         results_end_index = page_number*results_length
 
         results = ExamRecording.query
-        if user_id and exam_id:
-            # If user_id and exam_id are present, find the specific exam recording
-            results = results.filter_by(user_id=user_id, exam_id=exam_id)
-        if exam_id:
-            # If just exam_id is present, find the exam recordings associated with exam_id
-            results = results.filter_by(user_id=user_id, exam_id=exam_id).order_by(ExamRecording.time_started.desc())
-        if user_id:
-            # If just user_id is present, find the exam recordings associated with user_id
-            results = results.filter_by(user_id=user_id).order_by(ExamRecording.time_started.desc())
-        if in_progress is not None:
-            # If in_progress is defined, get ones that are if true, or past ones if false
-            if in_progress:
-                results = results.filter(ExamRecording.time_ended is None)
-            else:
-                results = results.filter(ExamRecording.time_ended is not None)
-        if period_start:
-            results = results.filter(ExamRecording.time_started >= period_start)
-        if period_end:
-            results = results.filter(ExamRecording.time_ended <= period_end)
 
-        results = results.order_by(ExamRecording.time_started.desc()).all()
+        # Filters results
+        if exam_id: results = results.filter_by(exam_id=exam_id)
+        if user_id: results = results.filter_by(user_id=user_id)
+        if in_progress is not None:
+            if in_progress: results = results.filter(ExamRecording.time_ended is None)
+            else: results = results.filter(ExamRecording.time_ended is not None)
+        if period_start: results = results.filter(ExamRecording.time_started >= period_start)
+        if period_end: results = results.filter(ExamRecording.time_ended <= period_end)
+
+        # Orders results
+        if order_by == 'time_started':
+            if order == 'desc': results = results.order_by(ExamRecording.time_started.desc())
+            else: results = results.order_by(ExamRecording.time_started.asc())
+        elif order_by == 'time_ended':
+            if order == 'desc': results = results.order_by(ExamRecording.time_ended.desc())
+            else: results = results.order_by(ExamRecording.time_ended.asc())
+
+        results = results.all()
+
         # Reduces number of results and serialises into string format for payload
         total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index - results_length:results_end_index]
@@ -315,6 +353,7 @@ def delete_exam_recording(exam_recording_id):
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
+
 @api.route('/examiner/exam_warning/create', methods=('POST',))
 def create_exam_warning():
     """
@@ -336,39 +375,42 @@ def create_exam_warning():
 @api.route('/examiner/exam_warning', methods=('GET',))
 def get_exam_warning():
     """
-    Gets existing exam warning records, can be filtered with exam_warning_id, exam_recording_id, period_start and period_end.
+    Gets existing exam warning records, can be filtered with exam_warning_id, exam_recording_id, warning_time.
     Returned results are limited by results_length and page_number.
     """
     try:
+        # Gets parameters
         exam_warning_id = request.args.get('exam_warning_id', default=None, type=int)
         exam_recording_id = request.args.get('exam_recording_id', default=None, type=int)
+
         period_start = request.args.get('period_start', default=timedelta(days=10))
         period_end = request.args.get('period_end', default=timedelta(days=10))
-        
+        if period_start == timedelta(days=10): period_start = None
+        if period_end == timedelta(days=10): period_end = None
+
+        order_by = request.args.get('order_by', default="warning_time").lower()
+        order = request.args.get('order', default="desc").lower()
+
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
-
-        if period_start == timedelta(days=10):
-            period_start = None
-        if period_end == timedelta(days=10):
-            period_end = None
-
-        if page_number < 1:
-            page_number = 1
-        if results_length < 1 or results_length > 100:
-            results_length = 25
+        if page_number < 1: page_number = 1
+        if results_length < 1 or results_length > 100: results_length = 25
         
         results = ExamWarning.query
-        if exam_warning_id:
-            results = results.filter_by(exam_warning_id=exam_warning_id)
-        if exam_recording_id:
-            results = results.filter_by(exam_recording_id=exam_recording_id)
-        if period_start:
-            results = results.filter(ExamWarning.warning_time >= period_start)
-        if period_end:
-            results = results.filter(ExamWarning.warning_time <= period_end)
+        # Filters results
+        if exam_warning_id: results = results.filter_by(exam_warning_id=exam_warning_id)
+        if exam_recording_id: results = results.filter_by(exam_recording_id=exam_recording_id)
+        if period_start: results = results.filter(ExamWarning.warning_time >= period_start)
+        if period_end: results = results.filter(ExamWarning.warning_time <= period_end)
+
+        # Orders results
+        if order_by == 'warning_time':
+            if order == 'desc': results = results.order_by(ExamWarning.warning_time.desc())
+            else: results = results.order_by(ExamWarning.warning_time.asc())
 
         results = results.all()
+
+        # Reduces number of results and serialises
         results_end_index = page_number*results_length
         total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index-results_length:results_end_index]
@@ -376,10 +418,8 @@ def get_exam_warning():
 
         return jsonify({'exam_warnings':exam_warnings, 'total_pages':total_pages}), 200
     except exc.SQLAlchemyError as e:
-        #db.session.rollback()
         return jsonify({ 'message': e.args }), 500
-        
-    
+
 @api.route('/examiner/exam_warning/update', methods=('POST',))
 def update_exam_warning(): #arpita to do
     """
@@ -425,25 +465,34 @@ def get_examinee():
         user_id = request.args.get('user_id', default=None, type=int)
         first_name = request.args.get('first_name', default=None)
         last_name = request.args.get('last_name', default=None)
-
+        order_by = request.args.get('order_by', default='first_name').lower()
+        order = request.args.get('order', default='desc').lower()
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
 
-        if page_number < 1:
-            page_number = 1
-        if results_length < 1 or results_length > 100:
-            results_length = 25
+        if page_number < 1: page_number = 1
+        if results_length < 1 or results_length > 100: results_length = 25
 
-        results = User.query
-                
-        if user_id:
-            results = results.filter_by(user_id=user_id)
-        if first_name:
-            results = results.filter(User.first_name.startswith(first_name))
-        if last_name:
-            results = results.filter(User.last_name.startswith(last_name))
+        results = User.query.filter_by(is_examiner=False)
+        # Filters results
+        if user_id: results = results.filter_by(user_id=user_id)
+        if first_name: results = results.filter(User.first_name.startswith(first_name))
+        if last_name: results = results.filter(User.last_name.startswith(last_name))
+
+        # Orders results
+        if order_by == 'user_id':
+            if order == 'desc': results = results.order_by(User.user_id.desc())
+            else: results = results.order_by(User.user_id.asc())
+        elif order_by == 'first_name':
+            if order == 'desc': results = results.order_by(User.first_name.desc())
+            else: results = results.order_by(User.first_name.asc())
+        elif order_by == 'last_name':
+            if order == 'desc': results = results.order_by(User.last_name.desc())
+            else: results = results.order_by(User.last_name.asc())
+        
         results = results.all()
 
+        # Reduces number of results and serialises
         results_end_index = page_number*results_length
         total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index - results_length:results_end_index]
@@ -451,7 +500,6 @@ def get_examinee():
         return jsonify({'users':users, 'total_pages':total_pages}), 200
     except exc.SQLAlchemyError as e:
         return jsonify({ 'message': e.args }), 500
-
 
 # This is a decorator function which will be used to protect authentication-sensitive API endpoints
 def token_required(f):
