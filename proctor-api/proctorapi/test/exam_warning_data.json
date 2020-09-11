@@ -1,0 +1,2882 @@
+[
+{
+"exam_recording_id": 688,
+"description": "Used tablet during exam",
+"warning_time": "2020-09-10 18:00:18"
+},
+{
+"exam_recording_id": 688,
+"description": "Used books in closed book exam",
+"warning_time": "2020-09-10 18:27:10.500000"
+},
+{
+"exam_recording_id": 688,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-09-10 19:47:48"
+},
+{
+"exam_recording_id": 619,
+"description": "Used tablet during exam",
+"warning_time": "2020-09-09 15:16:01.666667"
+},
+{
+"exam_recording_id": 683,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-09-08 09:23:38"
+},
+{
+"exam_recording_id": 617,
+"description": "Used books in closed book exam",
+"warning_time": "2020-09-08 06:50:59.333333"
+},
+{
+"exam_recording_id": 617,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-09-08 07:13:04"
+},
+{
+"exam_recording_id": 617,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-09-08 08:19:18"
+},
+{
+"exam_recording_id": 685,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-09-06 21:51:13.666667"
+},
+{
+"exam_recording_id": 571,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-09-06 15:09:55.666667"
+},
+{
+"exam_recording_id": 571,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-09-06 15:33:59"
+},
+{
+"exam_recording_id": 682,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-09-06 06:53:09.666667"
+},
+{
+"exam_recording_id": 682,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-09-06 07:24:50"
+},
+{
+"exam_recording_id": 615,
+"description": "Used tablet during exam",
+"warning_time": "2020-09-06 03:35:08.666667"
+},
+{
+"exam_recording_id": 615,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-09-06 03:56:36.500000"
+},
+{
+"exam_recording_id": 616,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-09-03 03:15:17.333333"
+},
+{
+"exam_recording_id": 587,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-09-02 20:16:57.666667"
+},
+{
+"exam_recording_id": 625,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-31 17:16:08.666667"
+},
+{
+"exam_recording_id": 581,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-31 14:03:18"
+},
+{
+"exam_recording_id": 620,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-31 06:15:09.666667"
+},
+{
+"exam_recording_id": 620,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-31 06:42:47"
+},
+{
+"exam_recording_id": 589,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-30 15:13:12"
+},
+{
+"exam_recording_id": 585,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-08-30 07:32:58"
+},
+{
+"exam_recording_id": 585,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-30 07:53:17.500000"
+},
+{
+"exam_recording_id": 585,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-30 08:54:16"
+},
+{
+"exam_recording_id": 644,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-30 03:21:27.333333"
+},
+{
+"exam_recording_id": 622,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-29 17:32:09.666667"
+},
+{
+"exam_recording_id": 622,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-29 17:51:26"
+},
+{
+"exam_recording_id": 606,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-29 14:29:45.333333"
+},
+{
+"exam_recording_id": 601,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-28 16:56:55.666667"
+},
+{
+"exam_recording_id": 582,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-28 01:59:54.666667"
+},
+{
+"exam_recording_id": 582,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-28 02:20:50"
+},
+{
+"exam_recording_id": 637,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-27 17:57:57.333333"
+},
+{
+"exam_recording_id": 637,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-27 18:25:10"
+},
+{
+"exam_recording_id": 648,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-27 03:55:13"
+},
+{
+"exam_recording_id": 650,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-26 10:11:49.333333"
+},
+{
+"exam_recording_id": 573,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-25 22:56:33.666667"
+},
+{
+"exam_recording_id": 573,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-25 23:23:30.500000"
+},
+{
+"exam_recording_id": 575,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-25 07:24:14.666667"
+},
+{
+"exam_recording_id": 590,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-24 15:04:09"
+},
+{
+"exam_recording_id": 597,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-23 23:41:04.666667"
+},
+{
+"exam_recording_id": 597,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-24 00:09:04"
+},
+{
+"exam_recording_id": 583,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-23 15:31:51"
+},
+{
+"exam_recording_id": 583,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-23 15:52:21"
+},
+{
+"exam_recording_id": 598,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-23 15:30:37"
+},
+{
+"exam_recording_id": 598,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-23 15:52:35.500000"
+},
+{
+"exam_recording_id": 653,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-23 09:45:07.666667"
+},
+{
+"exam_recording_id": 595,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-23 06:30:42.333333"
+},
+{
+"exam_recording_id": 631,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-22 20:24:42"
+},
+{
+"exam_recording_id": 631,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-08-22 20:57:48.500000"
+},
+{
+"exam_recording_id": 642,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-22 09:28:08"
+},
+{
+"exam_recording_id": 654,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-22 00:27:23.333333"
+},
+{
+"exam_recording_id": 670,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-21 14:51:44.666667"
+},
+{
+"exam_recording_id": 657,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-21 07:41:57.333333"
+},
+{
+"exam_recording_id": 609,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-20 15:17:33"
+},
+{
+"exam_recording_id": 609,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-08-20 15:42:09"
+},
+{
+"exam_recording_id": 592,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-20 10:43:03.333333"
+},
+{
+"exam_recording_id": 586,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-20 06:34:13"
+},
+{
+"exam_recording_id": 586,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-20 07:02:22"
+},
+{
+"exam_recording_id": 586,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-20 08:26:49"
+},
+{
+"exam_recording_id": 600,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-20 01:18:44.666667"
+},
+{
+"exam_recording_id": 664,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-19 18:05:07"
+},
+{
+"exam_recording_id": 664,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-19 18:35:46"
+},
+{
+"exam_recording_id": 675,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-19 10:26:49.333333"
+},
+{
+"exam_recording_id": 643,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-19 08:33:34.666667"
+},
+{
+"exam_recording_id": 580,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-19 03:05:09"
+},
+{
+"exam_recording_id": 580,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-19 03:34:17"
+},
+{
+"exam_recording_id": 580,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-19 05:01:41"
+},
+{
+"exam_recording_id": 633,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-19 01:32:29"
+},
+{
+"exam_recording_id": 596,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-18 16:47:26.666667"
+},
+{
+"exam_recording_id": 596,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-18 17:06:21"
+},
+{
+"exam_recording_id": 647,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-16 17:38:43"
+},
+{
+"exam_recording_id": 647,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-16 18:08:11.500000"
+},
+{
+"exam_recording_id": 638,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-08-16 16:22:54.333333"
+},
+{
+"exam_recording_id": 668,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-16 15:02:44.333333"
+},
+{
+"exam_recording_id": 668,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-16 15:24:15.500000"
+},
+{
+"exam_recording_id": 668,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-16 16:28:49"
+},
+{
+"exam_recording_id": 649,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-16 03:31:37.666667"
+},
+{
+"exam_recording_id": 676,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-15 11:28:05.666667"
+},
+{
+"exam_recording_id": 593,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-15 06:30:29.333333"
+},
+{
+"exam_recording_id": 665,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-14 07:20:32"
+},
+{
+"exam_recording_id": 665,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-14 07:43:06"
+},
+{
+"exam_recording_id": 665,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-14 08:50:48"
+},
+{
+"exam_recording_id": 656,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-08-14 07:09:53.333333"
+},
+{
+"exam_recording_id": 679,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-13 04:35:57.333333"
+},
+{
+"exam_recording_id": 607,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-12 09:58:59.333333"
+},
+{
+"exam_recording_id": 607,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-12 10:18:53"
+},
+{
+"exam_recording_id": 607,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-12 11:18:34"
+},
+{
+"exam_recording_id": 519,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-08 16:23:05.666667"
+},
+{
+"exam_recording_id": 519,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-08 16:41:37.500000"
+},
+{
+"exam_recording_id": 525,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-08 16:38:32"
+},
+{
+"exam_recording_id": 525,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-08 17:06:06.500000"
+},
+{
+"exam_recording_id": 502,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-08-07 10:46:41.666667"
+},
+{
+"exam_recording_id": 502,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-07 11:14:07"
+},
+{
+"exam_recording_id": 531,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-07 01:57:31.333333"
+},
+{
+"exam_recording_id": 677,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-06 22:55:04"
+},
+{
+"exam_recording_id": 549,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-06 12:00:26"
+},
+{
+"exam_recording_id": 532,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-06 05:30:06.333333"
+},
+{
+"exam_recording_id": 537,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-05 21:39:46.666667"
+},
+{
+"exam_recording_id": 537,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-05 22:04:43.500000"
+},
+{
+"exam_recording_id": 658,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-05 20:59:12"
+},
+{
+"exam_recording_id": 658,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-05 21:22:46"
+},
+{
+"exam_recording_id": 658,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-05 22:33:28"
+},
+{
+"exam_recording_id": 512,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-05 13:04:40.333333"
+},
+{
+"exam_recording_id": 508,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-05 09:58:30.666667"
+},
+{
+"exam_recording_id": 530,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-05 00:40:47.666667"
+},
+{
+"exam_recording_id": 552,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-08-04 23:01:20.333333"
+},
+{
+"exam_recording_id": 552,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-04 23:23:59"
+},
+{
+"exam_recording_id": 518,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-04 17:05:58.333333"
+},
+{
+"exam_recording_id": 518,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-08-04 17:31:33"
+},
+{
+"exam_recording_id": 518,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-04 18:48:17"
+},
+{
+"exam_recording_id": 470,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-04 09:25:31.666667"
+},
+{
+"exam_recording_id": 470,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-08-04 09:47:32"
+},
+{
+"exam_recording_id": 569,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-04 00:10:56.333333"
+},
+{
+"exam_recording_id": 569,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-04 00:40:26"
+},
+{
+"exam_recording_id": 496,
+"description": "Used tablet during exam",
+"warning_time": "2020-08-03 22:48:03.666667"
+},
+{
+"exam_recording_id": 663,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-08-03 08:05:54.666667"
+},
+{
+"exam_recording_id": 663,
+"description": "Used books in closed book exam",
+"warning_time": "2020-08-03 08:28:06.500000"
+},
+{
+"exam_recording_id": 507,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-08-03 04:29:14.333333"
+},
+{
+"exam_recording_id": 553,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-08-03 00:10:07"
+},
+{
+"exam_recording_id": 505,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-31 21:26:31"
+},
+{
+"exam_recording_id": 551,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-30 22:39:45.333333"
+},
+{
+"exam_recording_id": 557,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-29 23:47:20"
+},
+{
+"exam_recording_id": 557,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-30 00:10:06"
+},
+{
+"exam_recording_id": 557,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-30 01:18:24"
+},
+{
+"exam_recording_id": 475,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-29 22:48:08.333333"
+},
+{
+"exam_recording_id": 492,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-29 13:57:18.666667"
+},
+{
+"exam_recording_id": 492,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-29 14:20:27.500000"
+},
+{
+"exam_recording_id": 492,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-29 15:29:54"
+},
+{
+"exam_recording_id": 461,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-28 20:41:00.333333"
+},
+{
+"exam_recording_id": 484,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-28 20:21:43"
+},
+{
+"exam_recording_id": 484,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-28 20:41:05.500000"
+},
+{
+"exam_recording_id": 490,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-28 11:37:43.666667"
+},
+{
+"exam_recording_id": 490,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-28 11:56:10.500000"
+},
+{
+"exam_recording_id": 490,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-28 12:51:31"
+},
+{
+"exam_recording_id": 546,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-28 11:28:23.666667"
+},
+{
+"exam_recording_id": 566,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-28 11:14:49.666667"
+},
+{
+"exam_recording_id": 566,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-28 11:47:20"
+},
+{
+"exam_recording_id": 563,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-27 21:45:56"
+},
+{
+"exam_recording_id": 517,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-27 20:23:37"
+},
+{
+"exam_recording_id": 542,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-27 09:46:44"
+},
+{
+"exam_recording_id": 542,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-27 10:14:01.500000"
+},
+{
+"exam_recording_id": 542,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-27 11:35:54"
+},
+{
+"exam_recording_id": 459,
+"description": "Used books in closed book exam",
+"warning_time": "2020-07-27 07:14:44.333333"
+},
+{
+"exam_recording_id": 471,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-27 04:10:18.333333"
+},
+{
+"exam_recording_id": 536,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-26 17:30:02.333333"
+},
+{
+"exam_recording_id": 453,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-26 12:13:21.333333"
+},
+{
+"exam_recording_id": 453,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-26 12:32:16.500000"
+},
+{
+"exam_recording_id": 453,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-26 13:29:02"
+},
+{
+"exam_recording_id": 483,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-26 08:27:25"
+},
+{
+"exam_recording_id": 483,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-26 08:48:53"
+},
+{
+"exam_recording_id": 541,
+"description": "Used books in closed book exam",
+"warning_time": "2020-07-26 01:33:23.666667"
+},
+{
+"exam_recording_id": 541,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-26 01:59:35"
+},
+{
+"exam_recording_id": 561,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-25 20:07:37"
+},
+{
+"exam_recording_id": 561,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-25 20:34:08.500000"
+},
+{
+"exam_recording_id": 561,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-25 21:53:43"
+},
+{
+"exam_recording_id": 463,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-25 05:33:34.666667"
+},
+{
+"exam_recording_id": 463,
+"description": "Used books in closed book exam",
+"warning_time": "2020-07-25 05:51:24"
+},
+{
+"exam_recording_id": 463,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-25 06:44:52"
+},
+{
+"exam_recording_id": 543,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-24 14:57:26"
+},
+{
+"exam_recording_id": 543,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-24 15:19:02"
+},
+{
+"exam_recording_id": 529,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-24 07:05:45.666667"
+},
+{
+"exam_recording_id": 529,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-24 07:29:18.500000"
+},
+{
+"exam_recording_id": 478,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-24 01:22:06.333333"
+},
+{
+"exam_recording_id": 489,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-23 23:09:58.666667"
+},
+{
+"exam_recording_id": 489,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-23 23:26:51.500000"
+},
+{
+"exam_recording_id": 528,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-22 17:51:25.333333"
+},
+{
+"exam_recording_id": 528,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-22 18:24:07"
+},
+{
+"exam_recording_id": 466,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-22 09:30:06"
+},
+{
+"exam_recording_id": 555,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-22 07:26:00.333333"
+},
+{
+"exam_recording_id": 515,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-22 05:40:07"
+},
+{
+"exam_recording_id": 513,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-21 07:22:46.666667"
+},
+{
+"exam_recording_id": 539,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-21 05:56:56"
+},
+{
+"exam_recording_id": 539,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-21 06:19:05"
+},
+{
+"exam_recording_id": 539,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-21 07:25:32"
+},
+{
+"exam_recording_id": 452,
+"description": "Used books in closed book exam",
+"warning_time": "2020-07-20 22:09:02.333333"
+},
+{
+"exam_recording_id": 452,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-20 22:29:11.500000"
+},
+{
+"exam_recording_id": 452,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-20 23:29:39"
+},
+{
+"exam_recording_id": 482,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-20 01:13:02.333333"
+},
+{
+"exam_recording_id": 482,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-20 01:31:40.500000"
+},
+{
+"exam_recording_id": 482,
+"description": "Used books in closed book exam",
+"warning_time": "2020-07-20 02:27:35"
+},
+{
+"exam_recording_id": 460,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-20 00:56:11.333333"
+},
+{
+"exam_recording_id": 547,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-18 23:45:26.666667"
+},
+{
+"exam_recording_id": 468,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-18 06:24:02.666667"
+},
+{
+"exam_recording_id": 488,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-17 13:38:22.666667"
+},
+{
+"exam_recording_id": 488,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-17 13:57:15"
+},
+{
+"exam_recording_id": 385,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-16 15:16:13"
+},
+{
+"exam_recording_id": 385,
+"description": "Used books in closed book exam",
+"warning_time": "2020-07-16 15:36:28.500000"
+},
+{
+"exam_recording_id": 399,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-15 03:49:28.666667"
+},
+{
+"exam_recording_id": 486,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-14 10:29:54"
+},
+{
+"exam_recording_id": 398,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-13 16:15:57"
+},
+{
+"exam_recording_id": 398,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-13 16:41:39"
+},
+{
+"exam_recording_id": 413,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-13 03:24:22.333333"
+},
+{
+"exam_recording_id": 395,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-11 01:25:18.666667"
+},
+{
+"exam_recording_id": 395,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-11 01:46:05.500000"
+},
+{
+"exam_recording_id": 421,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-10 04:27:40.666667"
+},
+{
+"exam_recording_id": 406,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-09 19:35:46.666667"
+},
+{
+"exam_recording_id": 402,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-08 12:12:41.333333"
+},
+{
+"exam_recording_id": 402,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-08 12:36:53"
+},
+{
+"exam_recording_id": 420,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-08 08:54:34.333333"
+},
+{
+"exam_recording_id": 415,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-08 03:38:16.666667"
+},
+{
+"exam_recording_id": 415,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-08 04:04:11"
+},
+{
+"exam_recording_id": 383,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-07 18:39:23.666667"
+},
+{
+"exam_recording_id": 448,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-07 05:36:58"
+},
+{
+"exam_recording_id": 448,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-07 06:02:16.500000"
+},
+{
+"exam_recording_id": 448,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-07 07:18:12"
+},
+{
+"exam_recording_id": 351,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-07 00:18:07.666667"
+},
+{
+"exam_recording_id": 351,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-07 00:31:32.500000"
+},
+{
+"exam_recording_id": 412,
+"description": "Used books in closed book exam",
+"warning_time": "2020-07-06 17:49:41.666667"
+},
+{
+"exam_recording_id": 412,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-06 18:16:35.500000"
+},
+{
+"exam_recording_id": 412,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-06 19:37:17"
+},
+{
+"exam_recording_id": 371,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-06 16:27:08.666667"
+},
+{
+"exam_recording_id": 371,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-06 16:46:08"
+},
+{
+"exam_recording_id": 371,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-06 17:43:06"
+},
+{
+"exam_recording_id": 397,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-06 12:29:09.666667"
+},
+{
+"exam_recording_id": 434,
+"description": "Used books in closed book exam",
+"warning_time": "2020-07-06 10:46:47"
+},
+{
+"exam_recording_id": 437,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-05 11:44:54"
+},
+{
+"exam_recording_id": 342,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-04 17:13:25.333333"
+},
+{
+"exam_recording_id": 445,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-03 22:16:18.666667"
+},
+{
+"exam_recording_id": 445,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-03 22:43:05.500000"
+},
+{
+"exam_recording_id": 427,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-03 20:52:07"
+},
+{
+"exam_recording_id": 441,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-03 18:52:11.333333"
+},
+{
+"exam_recording_id": 441,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-03 19:20:06.500000"
+},
+{
+"exam_recording_id": 387,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-03 14:55:52.333333"
+},
+{
+"exam_recording_id": 387,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-03 15:15:12"
+},
+{
+"exam_recording_id": 387,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-03 16:13:11"
+},
+{
+"exam_recording_id": 404,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-03 07:58:35.666667"
+},
+{
+"exam_recording_id": 404,
+"description": "Used books in closed book exam",
+"warning_time": "2020-07-03 08:20:20.500000"
+},
+{
+"exam_recording_id": 404,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-03 09:25:35"
+},
+{
+"exam_recording_id": 356,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-07-03 03:11:24.666667"
+},
+{
+"exam_recording_id": 408,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-02 01:43:33"
+},
+{
+"exam_recording_id": 408,
+"description": "Used tablet during exam",
+"warning_time": "2020-07-02 02:07:00"
+},
+{
+"exam_recording_id": 408,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-07-02 03:17:21"
+},
+{
+"exam_recording_id": 432,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-01 23:52:57"
+},
+{
+"exam_recording_id": 432,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-07-02 00:14:37.500000"
+},
+{
+"exam_recording_id": 432,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-02 01:19:39"
+},
+{
+"exam_recording_id": 410,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-07-01 10:55:43.333333"
+},
+{
+"exam_recording_id": 419,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-07-01 01:00:08.333333"
+},
+{
+"exam_recording_id": 347,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-06-30 11:54:59.666667"
+},
+{
+"exam_recording_id": 392,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-06-30 09:26:08"
+},
+{
+"exam_recording_id": 392,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-30 09:45:47"
+},
+{
+"exam_recording_id": 339,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-29 19:36:55.666667"
+},
+{
+"exam_recording_id": 423,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-29 00:52:07.666667"
+},
+{
+"exam_recording_id": 369,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-28 13:42:07.333333"
+},
+{
+"exam_recording_id": 431,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-28 09:50:27.333333"
+},
+{
+"exam_recording_id": 414,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-28 09:03:54.666667"
+},
+{
+"exam_recording_id": 360,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-28 05:15:25.333333"
+},
+{
+"exam_recording_id": 360,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-28 05:35:07.500000"
+},
+{
+"exam_recording_id": 357,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-28 04:20:07.333333"
+},
+{
+"exam_recording_id": 449,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-27 18:31:16.333333"
+},
+{
+"exam_recording_id": 449,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-27 18:54:20"
+},
+{
+"exam_recording_id": 364,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-27 16:51:43.666667"
+},
+{
+"exam_recording_id": 433,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-27 09:58:05.333333"
+},
+{
+"exam_recording_id": 336,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-06-27 02:01:54.333333"
+},
+{
+"exam_recording_id": 424,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-06-27 02:02:27"
+},
+{
+"exam_recording_id": 424,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-27 02:28:04.500000"
+},
+{
+"exam_recording_id": 424,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-06-27 03:44:57"
+},
+{
+"exam_recording_id": 446,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-26 22:55:02"
+},
+{
+"exam_recording_id": 446,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-26 23:20:12"
+},
+{
+"exam_recording_id": 446,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-27 00:35:42"
+},
+{
+"exam_recording_id": 396,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-26 00:35:00"
+},
+{
+"exam_recording_id": 396,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-26 00:56:23.500000"
+},
+{
+"exam_recording_id": 396,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-26 02:00:34"
+},
+{
+"exam_recording_id": 373,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-25 14:00:56.333333"
+},
+{
+"exam_recording_id": 373,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-25 14:24:41.500000"
+},
+{
+"exam_recording_id": 373,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-25 15:35:57"
+},
+{
+"exam_recording_id": 435,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-24 17:21:56.666667"
+},
+{
+"exam_recording_id": 435,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-24 17:50:26.500000"
+},
+{
+"exam_recording_id": 338,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-24 16:36:40.666667"
+},
+{
+"exam_recording_id": 355,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-23 23:34:56.666667"
+},
+{
+"exam_recording_id": 429,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-23 06:29:28"
+},
+{
+"exam_recording_id": 341,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-23 02:44:22"
+},
+{
+"exam_recording_id": 341,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-23 03:02:09.500000"
+},
+{
+"exam_recording_id": 341,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-23 03:55:32"
+},
+{
+"exam_recording_id": 379,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-22 07:45:03"
+},
+{
+"exam_recording_id": 379,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-22 08:06:33"
+},
+{
+"exam_recording_id": 374,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-21 20:53:05"
+},
+{
+"exam_recording_id": 374,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-21 21:09:33.500000"
+},
+{
+"exam_recording_id": 358,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-21 08:34:52.333333"
+},
+{
+"exam_recording_id": 358,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-21 08:49:20.500000"
+},
+{
+"exam_recording_id": 443,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-20 23:48:10.333333"
+},
+{
+"exam_recording_id": 443,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-21 00:15:07.500000"
+},
+{
+"exam_recording_id": 443,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-21 01:35:59"
+},
+{
+"exam_recording_id": 353,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-20 22:21:03"
+},
+{
+"exam_recording_id": 353,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-20 22:41:41"
+},
+{
+"exam_recording_id": 353,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-20 23:43:35"
+},
+{
+"exam_recording_id": 350,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-20 20:02:47.333333"
+},
+{
+"exam_recording_id": 350,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-20 20:22:33"
+},
+{
+"exam_recording_id": 352,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-20 19:33:12.666667"
+},
+{
+"exam_recording_id": 370,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-20 09:08:29.666667"
+},
+{
+"exam_recording_id": 370,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-20 09:29:46.500000"
+},
+{
+"exam_recording_id": 370,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-20 10:33:37"
+},
+{
+"exam_recording_id": 450,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-19 02:21:26.333333"
+},
+{
+"exam_recording_id": 450,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-19 02:41:51.500000"
+},
+{
+"exam_recording_id": 366,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-18 19:24:09.333333"
+},
+{
+"exam_recording_id": 366,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-18 19:45:50.500000"
+},
+{
+"exam_recording_id": 366,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-18 20:50:54"
+},
+{
+"exam_recording_id": 363,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-18 14:27:10.666667"
+},
+{
+"exam_recording_id": 363,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-18 14:46:37.500000"
+},
+{
+"exam_recording_id": 368,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-18 13:16:00.666667"
+},
+{
+"exam_recording_id": 368,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-18 13:36:25.500000"
+},
+{
+"exam_recording_id": 288,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-06-15 12:57:25.666667"
+},
+{
+"exam_recording_id": 288,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-15 13:16:23.500000"
+},
+{
+"exam_recording_id": 288,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-15 14:13:17"
+},
+{
+"exam_recording_id": 284,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-15 06:13:26.666667"
+},
+{
+"exam_recording_id": 284,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-15 06:32:21"
+},
+{
+"exam_recording_id": 284,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-15 07:29:04"
+},
+{
+"exam_recording_id": 273,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-06-14 05:44:56.666667"
+},
+{
+"exam_recording_id": 273,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-14 06:05:07.500000"
+},
+{
+"exam_recording_id": 273,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-14 07:05:40"
+},
+{
+"exam_recording_id": 278,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-14 02:43:48.666667"
+},
+{
+"exam_recording_id": 278,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-14 03:01:59"
+},
+{
+"exam_recording_id": 261,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-14 01:28:27"
+},
+{
+"exam_recording_id": 299,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-13 02:15:31.333333"
+},
+{
+"exam_recording_id": 299,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-13 02:28:36"
+},
+{
+"exam_recording_id": 279,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-12 20:22:01.666667"
+},
+{
+"exam_recording_id": 279,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-12 20:38:24.500000"
+},
+{
+"exam_recording_id": 279,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-12 21:27:33"
+},
+{
+"exam_recording_id": 310,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-12 17:30:46"
+},
+{
+"exam_recording_id": 310,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-12 17:51:14"
+},
+{
+"exam_recording_id": 302,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-12 16:17:26"
+},
+{
+"exam_recording_id": 293,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-11 20:37:49"
+},
+{
+"exam_recording_id": 293,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-11 20:58:45.500000"
+},
+{
+"exam_recording_id": 293,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-11 22:01:35"
+},
+{
+"exam_recording_id": 232,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-11 01:12:40.333333"
+},
+{
+"exam_recording_id": 256,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-10 10:25:55.666667"
+},
+{
+"exam_recording_id": 256,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-10 10:48:27.500000"
+},
+{
+"exam_recording_id": 256,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-10 11:56:03"
+},
+{
+"exam_recording_id": 233,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-10 01:18:38.333333"
+},
+{
+"exam_recording_id": 233,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-10 01:40:17"
+},
+{
+"exam_recording_id": 285,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-09 18:31:33.666667"
+},
+{
+"exam_recording_id": 246,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-07 21:33:04.333333"
+},
+{
+"exam_recording_id": 220,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-07 20:58:32"
+},
+{
+"exam_recording_id": 307,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-07 14:48:27.333333"
+},
+{
+"exam_recording_id": 238,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-07 12:52:30.666667"
+},
+{
+"exam_recording_id": 223,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-07 09:40:49.666667"
+},
+{
+"exam_recording_id": 236,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-06-06 17:58:29"
+},
+{
+"exam_recording_id": 236,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-06 18:26:45"
+},
+{
+"exam_recording_id": 236,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-06 19:51:33"
+},
+{
+"exam_recording_id": 301,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-06 17:09:34"
+},
+{
+"exam_recording_id": 280,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-04 23:52:07.333333"
+},
+{
+"exam_recording_id": 280,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-06-05 00:13:29"
+},
+{
+"exam_recording_id": 226,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-04 10:18:21.333333"
+},
+{
+"exam_recording_id": 304,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-03 13:56:06.333333"
+},
+{
+"exam_recording_id": 286,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-06-03 01:17:22.666667"
+},
+{
+"exam_recording_id": 267,
+"description": "Used tablet during exam",
+"warning_time": "2020-06-02 08:34:29.333333"
+},
+{
+"exam_recording_id": 267,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-02 08:50:20"
+},
+{
+"exam_recording_id": 295,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-01 22:33:59"
+},
+{
+"exam_recording_id": 295,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-06-01 22:52:36"
+},
+{
+"exam_recording_id": 287,
+"description": "Used books in closed book exam",
+"warning_time": "2020-06-01 07:39:21.333333"
+},
+{
+"exam_recording_id": 216,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-06-01 07:11:38.333333"
+},
+{
+"exam_recording_id": 266,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-06-01 06:58:46.666667"
+},
+{
+"exam_recording_id": 313,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-31 10:06:37"
+},
+{
+"exam_recording_id": 290,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-30 21:00:48.333333"
+},
+{
+"exam_recording_id": 257,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-29 21:36:52.333333"
+},
+{
+"exam_recording_id": 257,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-05-29 22:03:02"
+},
+{
+"exam_recording_id": 271,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-29 18:52:15.666667"
+},
+{
+"exam_recording_id": 332,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-29 12:00:12.666667"
+},
+{
+"exam_recording_id": 225,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-29 06:52:35.333333"
+},
+{
+"exam_recording_id": 270,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-29 01:07:00.666667"
+},
+{
+"exam_recording_id": 333,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-28 23:49:05.333333"
+},
+{
+"exam_recording_id": 248,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-27 14:14:19"
+},
+{
+"exam_recording_id": 248,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-27 14:44:07.500000"
+},
+{
+"exam_recording_id": 268,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-27 12:03:55"
+},
+{
+"exam_recording_id": 297,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-27 04:56:15.666667"
+},
+{
+"exam_recording_id": 297,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-27 05:18:18"
+},
+{
+"exam_recording_id": 325,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-26 14:31:23"
+},
+{
+"exam_recording_id": 325,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-26 14:57:19"
+},
+{
+"exam_recording_id": 325,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-05-26 16:15:07"
+},
+{
+"exam_recording_id": 250,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-05-26 06:35:29.333333"
+},
+{
+"exam_recording_id": 251,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-25 18:53:38.333333"
+},
+{
+"exam_recording_id": 324,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-25 14:05:58.666667"
+},
+{
+"exam_recording_id": 324,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-25 14:28:56.500000"
+},
+{
+"exam_recording_id": 249,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-25 00:16:16.666667"
+},
+{
+"exam_recording_id": 228,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-24 11:43:21.666667"
+},
+{
+"exam_recording_id": 228,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-24 12:03:58.500000"
+},
+{
+"exam_recording_id": 242,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-23 17:07:24"
+},
+{
+"exam_recording_id": 242,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-23 17:36:04"
+},
+{
+"exam_recording_id": 242,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-23 19:02:04"
+},
+{
+"exam_recording_id": 330,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-23 00:12:38"
+},
+{
+"exam_recording_id": 335,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-22 14:56:57.333333"
+},
+{
+"exam_recording_id": 335,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-22 15:22:15"
+},
+{
+"exam_recording_id": 335,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-22 16:38:08"
+},
+{
+"exam_recording_id": 326,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-18 07:53:53"
+},
+{
+"exam_recording_id": 316,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-16 20:10:11.333333"
+},
+{
+"exam_recording_id": 131,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-15 09:36:25.666667"
+},
+{
+"exam_recording_id": 86,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-15 04:53:53.333333"
+},
+{
+"exam_recording_id": 86,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-15 05:10:21.500000"
+},
+{
+"exam_recording_id": 331,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-15 04:56:27.333333"
+},
+{
+"exam_recording_id": 127,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-05-15 03:59:01.666667"
+},
+{
+"exam_recording_id": 320,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-05-14 11:09:31"
+},
+{
+"exam_recording_id": 319,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-14 09:11:46.333333"
+},
+{
+"exam_recording_id": 319,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-14 09:36:12"
+},
+{
+"exam_recording_id": 91,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-14 07:41:19.666667"
+},
+{
+"exam_recording_id": 91,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-05-14 08:00:45"
+},
+{
+"exam_recording_id": 91,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-14 08:59:01"
+},
+{
+"exam_recording_id": 126,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-14 07:10:56.333333"
+},
+{
+"exam_recording_id": 126,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-14 07:27:04"
+},
+{
+"exam_recording_id": 126,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-14 08:15:27"
+},
+{
+"exam_recording_id": 68,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-14 04:25:32.333333"
+},
+{
+"exam_recording_id": 68,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-14 04:41:21"
+},
+{
+"exam_recording_id": 68,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-14 05:28:47"
+},
+{
+"exam_recording_id": 110,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-14 02:13:46.333333"
+},
+{
+"exam_recording_id": 111,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-13 23:25:52.333333"
+},
+{
+"exam_recording_id": 115,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-13 02:27:08.333333"
+},
+{
+"exam_recording_id": 115,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-13 02:43:23"
+},
+{
+"exam_recording_id": 74,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-12 20:44:30.333333"
+},
+{
+"exam_recording_id": 74,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-12 21:00:19.500000"
+},
+{
+"exam_recording_id": 74,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-12 21:47:47"
+},
+{
+"exam_recording_id": 114,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-11 15:36:26"
+},
+{
+"exam_recording_id": 114,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-05-11 15:56:06"
+},
+{
+"exam_recording_id": 96,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-10 20:23:13"
+},
+{
+"exam_recording_id": 96,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-10 20:38:54.500000"
+},
+{
+"exam_recording_id": 129,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-10 09:22:38"
+},
+{
+"exam_recording_id": 138,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-09 00:04:12"
+},
+{
+"exam_recording_id": 138,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-09 00:27:55.500000"
+},
+{
+"exam_recording_id": 138,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-09 01:39:06"
+},
+{
+"exam_recording_id": 98,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-08 04:27:50.666667"
+},
+{
+"exam_recording_id": 104,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-07 23:47:57.333333"
+},
+{
+"exam_recording_id": 123,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-07 21:49:04.333333"
+},
+{
+"exam_recording_id": 137,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-07 15:37:42.333333"
+},
+{
+"exam_recording_id": 102,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-05-07 12:38:32.333333"
+},
+{
+"exam_recording_id": 102,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-07 12:53:16.500000"
+},
+{
+"exam_recording_id": 76,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-06 18:59:36.666667"
+},
+{
+"exam_recording_id": 76,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-06 19:17:15"
+},
+{
+"exam_recording_id": 76,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-06 20:10:10"
+},
+{
+"exam_recording_id": 133,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-06 16:38:20.333333"
+},
+{
+"exam_recording_id": 133,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-06 16:53:26.500000"
+},
+{
+"exam_recording_id": 69,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-06 13:17:28.666667"
+},
+{
+"exam_recording_id": 69,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-06 13:36:27.500000"
+},
+{
+"exam_recording_id": 69,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-06 14:33:24"
+},
+{
+"exam_recording_id": 108,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-06 06:06:24.333333"
+},
+{
+"exam_recording_id": 130,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-05 17:17:03.666667"
+},
+{
+"exam_recording_id": 130,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-05 17:36:50"
+},
+{
+"exam_recording_id": 130,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-05 18:36:09"
+},
+{
+"exam_recording_id": 73,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-05-03 13:10:40.666667"
+},
+{
+"exam_recording_id": 125,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-03 08:55:21.333333"
+},
+{
+"exam_recording_id": 106,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-05-02 17:45:05"
+},
+{
+"exam_recording_id": 106,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-05-02 17:58:46"
+},
+{
+"exam_recording_id": 106,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-02 18:39:49"
+},
+{
+"exam_recording_id": 66,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-01 18:17:24"
+},
+{
+"exam_recording_id": 64,
+"description": "Used tablet during exam",
+"warning_time": "2020-05-01 09:48:47.666667"
+},
+{
+"exam_recording_id": 64,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-01 10:09:50.500000"
+},
+{
+"exam_recording_id": 64,
+"description": "Used books in closed book exam",
+"warning_time": "2020-05-01 11:12:59"
+},
+{
+"exam_recording_id": 135,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-01 06:58:59"
+},
+{
+"exam_recording_id": 99,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-05-01 04:45:57.333333"
+},
+{
+"exam_recording_id": 99,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-05-01 05:05:48"
+},
+{
+"exam_recording_id": 81,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-30 18:55:02"
+},
+{
+"exam_recording_id": 81,
+"description": "Used books in closed book exam",
+"warning_time": "2020-04-30 19:12:17.500000"
+},
+{
+"exam_recording_id": 118,
+"description": "Used books in closed book exam",
+"warning_time": "2020-04-29 11:06:25.333333"
+},
+{
+"exam_recording_id": 118,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-29 11:26:34.500000"
+},
+{
+"exam_recording_id": 87,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-28 03:30:36.333333"
+},
+{
+"exam_recording_id": 87,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-28 03:48:14.500000"
+},
+{
+"exam_recording_id": 136,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-28 01:33:03.666667"
+},
+{
+"exam_recording_id": 136,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-28 01:53:42.500000"
+},
+{
+"exam_recording_id": 136,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-28 02:55:39"
+},
+{
+"exam_recording_id": 78,
+"description": "Used books in closed book exam",
+"warning_time": "2020-04-27 21:48:49.333333"
+},
+{
+"exam_recording_id": 78,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-27 22:07:22.500000"
+},
+{
+"exam_recording_id": 113,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-27 20:35:35.666667"
+},
+{
+"exam_recording_id": 177,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-23 09:56:59"
+},
+{
+"exam_recording_id": 208,
+"description": "Used books in closed book exam",
+"warning_time": "2020-04-22 14:41:33.333333"
+},
+{
+"exam_recording_id": 153,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-21 20:39:04.333333"
+},
+{
+"exam_recording_id": 153,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-21 20:56:54"
+},
+{
+"exam_recording_id": 153,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-21 21:50:23"
+},
+{
+"exam_recording_id": 141,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-21 11:27:58.333333"
+},
+{
+"exam_recording_id": 141,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-04-21 11:50:00"
+},
+{
+"exam_recording_id": 141,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-21 12:56:05"
+},
+{
+"exam_recording_id": 145,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-21 07:35:31"
+},
+{
+"exam_recording_id": 145,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-21 07:49:35"
+},
+{
+"exam_recording_id": 152,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-21 07:25:11.333333"
+},
+{
+"exam_recording_id": 191,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-20 21:55:18.333333"
+},
+{
+"exam_recording_id": 191,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-20 22:10:35"
+},
+{
+"exam_recording_id": 191,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-20 22:56:25"
+},
+{
+"exam_recording_id": 174,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-20 09:29:12.333333"
+},
+{
+"exam_recording_id": 174,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-20 09:48:06.500000"
+},
+{
+"exam_recording_id": 192,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-20 01:16:36.333333"
+},
+{
+"exam_recording_id": 192,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-20 01:37:26.500000"
+},
+{
+"exam_recording_id": 192,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-20 02:39:57"
+},
+{
+"exam_recording_id": 139,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-19 14:55:26.666667"
+},
+{
+"exam_recording_id": 139,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-19 15:13:26.500000"
+},
+{
+"exam_recording_id": 176,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-18 18:12:16.666667"
+},
+{
+"exam_recording_id": 185,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-17 18:45:27"
+},
+{
+"exam_recording_id": 185,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-17 19:06:42.500000"
+},
+{
+"exam_recording_id": 146,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-17 10:20:12.666667"
+},
+{
+"exam_recording_id": 146,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-17 10:40:09"
+},
+{
+"exam_recording_id": 178,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-16 09:31:29.333333"
+},
+{
+"exam_recording_id": 178,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-16 09:52:40"
+},
+{
+"exam_recording_id": 178,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-16 10:56:12"
+},
+{
+"exam_recording_id": 188,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-16 06:09:10"
+},
+{
+"exam_recording_id": 186,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-15 23:20:07.666667"
+},
+{
+"exam_recording_id": 186,
+"description": "Used books in closed book exam",
+"warning_time": "2020-04-15 23:33:28"
+},
+{
+"exam_recording_id": 187,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-15 10:09:51"
+},
+{
+"exam_recording_id": 159,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-14 11:59:55"
+},
+{
+"exam_recording_id": 196,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-14 09:42:30.333333"
+},
+{
+"exam_recording_id": 167,
+"description": "Used books in closed book exam",
+"warning_time": "2020-04-14 00:01:54"
+},
+{
+"exam_recording_id": 167,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-14 00:24:59"
+},
+{
+"exam_recording_id": 150,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-04-13 18:54:13.333333"
+},
+{
+"exam_recording_id": 157,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-13 10:13:08.666667"
+},
+{
+"exam_recording_id": 157,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-13 10:31:38"
+},
+{
+"exam_recording_id": 156,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-04-12 22:59:19.666667"
+},
+{
+"exam_recording_id": 156,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-12 23:20:53"
+},
+{
+"exam_recording_id": 184,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-12 22:45:32.333333"
+},
+{
+"exam_recording_id": 184,
+"description": "Used books in closed book exam",
+"warning_time": "2020-04-12 23:03:00.500000"
+},
+{
+"exam_recording_id": 148,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-12 04:29:38.333333"
+},
+{
+"exam_recording_id": 148,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-12 04:50:17.500000"
+},
+{
+"exam_recording_id": 168,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-12 02:01:00.333333"
+},
+{
+"exam_recording_id": 169,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-11 01:27:28"
+},
+{
+"exam_recording_id": 169,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-11 01:40:26"
+},
+{
+"exam_recording_id": 200,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-10 11:57:38.666667"
+},
+{
+"exam_recording_id": 200,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-10 12:16:51.500000"
+},
+{
+"exam_recording_id": 151,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-09 22:56:46.666667"
+},
+{
+"exam_recording_id": 211,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-04-09 13:35:39"
+},
+{
+"exam_recording_id": 144,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-07 23:02:22.333333"
+},
+{
+"exam_recording_id": 207,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-06 22:40:17"
+},
+{
+"exam_recording_id": 207,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-04-06 22:58:09.500000"
+},
+{
+"exam_recording_id": 207,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-06 23:51:47"
+},
+{
+"exam_recording_id": 203,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-06 10:53:44.333333"
+},
+{
+"exam_recording_id": 164,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-04-06 06:24:35.333333"
+},
+{
+"exam_recording_id": 164,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-06 06:43:44"
+},
+{
+"exam_recording_id": 206,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-06 04:46:56"
+},
+{
+"exam_recording_id": 206,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-06 05:06:58.500000"
+},
+{
+"exam_recording_id": 55,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-06 00:33:23"
+},
+{
+"exam_recording_id": 54,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-05 18:47:59.666667"
+},
+{
+"exam_recording_id": 53,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-05 13:22:10"
+},
+{
+"exam_recording_id": 53,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-04-05 13:42:16"
+},
+{
+"exam_recording_id": 53,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-05 14:42:34"
+},
+{
+"exam_recording_id": 52,
+"description": "Used tablet during exam",
+"warning_time": "2020-04-03 09:14:41.333333"
+},
+{
+"exam_recording_id": 52,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-03 09:31:09.500000"
+},
+{
+"exam_recording_id": 161,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-04-02 16:13:37"
+},
+{
+"exam_recording_id": 57,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-02 04:52:38"
+},
+{
+"exam_recording_id": 57,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-04-02 05:11:43"
+},
+{
+"exam_recording_id": 57,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-04-02 06:08:58"
+},
+{
+"exam_recording_id": 56,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-03-27 02:31:35"
+},
+{
+"exam_recording_id": 56,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-03-27 02:54:43.500000"
+},
+{
+"exam_recording_id": 58,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-27 00:33:10.333333"
+},
+{
+"exam_recording_id": 33,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-03-26 21:51:49.666667"
+},
+{
+"exam_recording_id": 63,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-03-26 12:28:41.333333"
+},
+{
+"exam_recording_id": 63,
+"description": "Used tablet during exam",
+"warning_time": "2020-03-26 12:43:07.500000"
+},
+{
+"exam_recording_id": 63,
+"description": "Used tablet during exam",
+"warning_time": "2020-03-26 13:26:26"
+},
+{
+"exam_recording_id": 61,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-03-25 22:56:50.333333"
+},
+{
+"exam_recording_id": 61,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-03-25 23:18:37"
+},
+{
+"exam_recording_id": 46,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-23 22:10:42"
+},
+{
+"exam_recording_id": 22,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-03-23 09:35:48.666667"
+},
+{
+"exam_recording_id": 40,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-03-22 05:08:09"
+},
+{
+"exam_recording_id": 37,
+"description": "Used calculator when it is not allowed",
+"warning_time": "2020-03-21 11:52:52.333333"
+},
+{
+"exam_recording_id": 37,
+"description": "Used tablet during exam",
+"warning_time": "2020-03-21 12:13:08.500000"
+},
+{
+"exam_recording_id": 37,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-03-21 13:13:57"
+},
+{
+"exam_recording_id": 7,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-21 10:27:35"
+},
+{
+"exam_recording_id": 18,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-03-21 02:20:32.666667"
+},
+{
+"exam_recording_id": 18,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-03-21 02:41:55.500000"
+},
+{
+"exam_recording_id": 18,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-03-21 03:46:04"
+},
+{
+"exam_recording_id": 30,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-03-20 17:17:39.666667"
+},
+{
+"exam_recording_id": 36,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-19 11:48:55.333333"
+},
+{
+"exam_recording_id": 36,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-03-19 12:09:07.500000"
+},
+{
+"exam_recording_id": 36,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-03-19 13:09:44"
+},
+{
+"exam_recording_id": 24,
+"description": "Used tablet during exam",
+"warning_time": "2020-03-19 06:13:27.333333"
+},
+{
+"exam_recording_id": 49,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-03-19 04:36:09.666667"
+},
+{
+"exam_recording_id": 31,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-18 18:29:57.666667"
+},
+{
+"exam_recording_id": 31,
+"description": "Used tablet during exam",
+"warning_time": "2020-03-18 18:48:11"
+},
+{
+"exam_recording_id": 31,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-03-18 19:42:51"
+},
+{
+"exam_recording_id": 20,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-03-17 14:29:42.666667"
+},
+{
+"exam_recording_id": 35,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-17 10:10:24.333333"
+},
+{
+"exam_recording_id": 12,
+"description": "Used notes in closed book exam",
+"warning_time": "2020-03-16 19:47:04.666667"
+},
+{
+"exam_recording_id": 34,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-16 18:48:17.666667"
+},
+{
+"exam_recording_id": 26,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-03-16 11:37:07"
+},
+{
+"exam_recording_id": 5,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-03-16 00:55:53.666667"
+},
+{
+"exam_recording_id": 5,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-03-16 01:17:57.500000"
+},
+{
+"exam_recording_id": 39,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-15 08:17:35.666667"
+},
+{
+"exam_recording_id": 32,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-03-14 20:23:23.666667"
+},
+{
+"exam_recording_id": 32,
+"description": "Communicated with someone in the room during the exam",
+"warning_time": "2020-03-14 20:45:26"
+},
+{
+"exam_recording_id": 25,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-13 14:21:41.666667"
+},
+{
+"exam_recording_id": 11,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-03-13 08:04:07.666667"
+},
+{
+"exam_recording_id": 8,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-12 16:56:33"
+},
+{
+"exam_recording_id": 2,
+"description": "Used mobile phone during exam",
+"warning_time": "2020-03-12 15:23:52.666667"
+},
+{
+"exam_recording_id": 14,
+"description": "Used books in closed book exam",
+"warning_time": "2020-03-12 03:35:54"
+},
+{
+"exam_recording_id": 16,
+"description": "Used an external laptop during exam",
+"warning_time": "2020-03-10 10:36:05"
+}
+]

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: cb19f7658f3c
+Revision ID: 4f39a5e92de2
 Revises: 
-Create Date: 2020-09-09 22:07:29.960656
+Create Date: 2020-09-11 08:59:39.211209
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
-revision = 'cb19f7658f3c'
+revision = '4f39a5e92de2'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -52,12 +52,12 @@ def upgrade():
     sa.PrimaryKeyConstraint('exam_recording_id')
     )
     op.create_table('examWarnings',
-    sa.Column('warning_id', mysql.INTEGER(unsigned=True), nullable=False),
+    sa.Column('exam_warning_id', mysql.INTEGER(unsigned=True), nullable=False),
     sa.Column('exam_recording_id', mysql.INTEGER(unsigned=True), nullable=False),
     sa.Column('warning_time', sa.DateTime(), nullable=True),
     sa.Column('description', sa.String(length=500), nullable=False),
     sa.ForeignKeyConstraint(['exam_recording_id'], ['examRecordings.exam_recording_id'], ),
-    sa.PrimaryKeyConstraint('warning_id')
+    sa.PrimaryKeyConstraint('exam_warning_id')
     )
     # ### end Alembic commands ###
 
