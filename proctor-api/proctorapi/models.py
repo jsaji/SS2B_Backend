@@ -37,20 +37,20 @@ class User(db.Model):
     
     @classmethod
     def authenticate(cls, **kwargs):
-        email = kwargs.get('email')
+        user_id = kwargs.get('user_id')
         password = kwargs.get('password')
   
-        if not email or not password:
+        if not user_id or not password:
             return None
 
-        user = cls.query.filter_by(email=email).first()
+        user = cls.query.filter_by(user_id=user_id).first()
         if not user or not check_password_hash(user.password, password):
             return None
 
         return user
 
     def to_dict(self):
-        return dict(id=self.user_id, email=self.email)
+        return dict(id=self.user_id)
 
 
 class Exam(db.Model):
