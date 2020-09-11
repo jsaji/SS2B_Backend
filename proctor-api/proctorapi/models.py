@@ -17,12 +17,13 @@ db = SQLAlchemy()
 required_fields = {'user':['user_id', 'first_name', 'last_name', 'password'],
                     'exam':['exam_name', 'subject_id', 'start_date', 'end_date', 'duration'],
                     'examrecording':['exam_id', 'user_id'],
-                    'examwarning':['exam_recording_id', 'warning_time', 'description']
-                    }
+                    'examwarning':['exam_recording_id', 'warning_time', 'description']}
 
 def parse_datetime(input_var):
     if isinstance(input_var, str):
         return parser.parse(input_var).replace(tzinfo=None)
+    elif input_var is None:
+        return input_var
     return input_var.replace(tzinfo=None)
 
 class User(db.Model):
@@ -129,8 +130,8 @@ class ExamRecording(db.Model):
             'exam_recording_id':self.exam_recording_id,
             'exam_id':self.exam_id,
             'user_id':self.user_id,
-            'time_started':self.time_started.strftime("%Y-%m-%d %H:%M:%S"),
-            'time_ended':self.time_ended.strftime("%Y-%m-%d %H:%M:%S"),
+            'time_started': (self.time_started.strftime("%Y-%m-%d %H:%M:%S") if self.time_started is not None else None),
+            'time_ended': (self.time_ended.strftime("%Y-%m-%d %H:%M:%S") if self.time_ended is not None else None),
             'video_link':self.video_link
         }
 
