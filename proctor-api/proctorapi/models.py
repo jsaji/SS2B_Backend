@@ -4,6 +4,7 @@ models.py
 """
 
 from datetime import datetime, timedelta
+from dateutil import parser
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
@@ -18,6 +19,11 @@ required_fields = {'user':['user_id', 'first_name', 'last_name', 'password'],
                     'examrecording':['exam_id', 'user_id'],
                     'examwarning':['exam_recording_id', 'warning_time', 'description']
                     }
+
+def parse_datetime(input_var):
+    if isinstance(input_var, str):
+        return parser.parse(input_var).replace(tzinfo=None)
+    return input_var.replace(tzinfo=None)
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -81,9 +87,9 @@ class Exam(db.Model):
         self.exam_name = exam_name
         self.subject_id = subject_id
         self.login_code = login_code
-        self.start_date = start_date
-        self.end_date = end_date
-        self.duration = duration
+        self.start_date = parse_datetime(start_date)
+        self.end_date = parse_datetime(end_date)
+        self.duration = parse_datetime(duration).time()
         self.document_link = document_link
 
     def to_dict(self):
@@ -114,8 +120,8 @@ class ExamRecording(db.Model):
     def __init__(self, exam_id, user_id, time_started=None, time_ended=None, video_link=None):
         self.exam_id = exam_id
         self.user_id = user_id
-        self.time_started = time_started
-        self.time_ended = time_ended
+        self.time_started = parse_datetime(time_started)
+        self.time_ended = parse_datetime(time_ended)
         self.video_link = video_link
 
     def to_dict(self):
@@ -138,7 +144,7 @@ class ExamWarning(db.Model):
 
     def __init__(self, exam_recording_id, warning_time, description):
         self.exam_recording_id = exam_recording_id
-        self.warning_time = warning_time
+        self.warning_time = parse_datetime(warning_time)
         self.description = description
 
     def to_dict(self):

@@ -92,8 +92,6 @@ def create_exam():
             if not code_exists:
                 data['login_code'] = potential_login_code
                 break
-        # Parses and obtains time component from duration
-        data['duration'] = parser.parse(data['duration']).time()
         exam = Exam(**data)
         db.session.add(exam)
         db.session.commit()
