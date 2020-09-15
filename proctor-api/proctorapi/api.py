@@ -192,23 +192,26 @@ def update_exam(): #arpita to do
         # find the existing model
         # return successful message
         # return jsonify(u.to_dict()), 200
+        data = request.json()
+
         return '', 204
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam/delete/<int:exam_id>', methods=('DELETE',))
-def delete_exam(): #arpita to do
+def delete_exam():
     """
     Deletes an existing exam record, dependent on whether it has already started
     """
     try:
-        print("hola")
-        # try get existing exam
-        # check if we're allowed to delete it
-        # if yes,
-        # return successful message
-        return '', 204
+        exam = Exam.query.get(exam_id)
+        if exam <= start_date:
+            # db.session.delete(exam)
+            # db.session.commit()
+            print("hola")
+            return '', 204
+        return jsonify({'message':'Exam with id {} could not be found'}), 404
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -427,14 +430,35 @@ def update_exam_warning(): #arpita to do
         # try get data
         # find the existing model
         # return successful message
-        # return jsonify(u.to_dict()), 200
-        return '', 204
+        # return jsonify(examwarning.to_dict()), 200
+        action = request.args.get('action', default='').lower()
+
+        data = request.json()
+
+        if not data.get('exam_warning_id'):
+            return jsonify({'message':'No exam_warning_id included in payload'}), 400
+
+        exam_warning_id = data['exam_warning_id']
+        exam_warning = ExamWarning.query.get(exam_warning_id)
+        if exam_warning is None:
+            return jsonify({'message':'Exam warning with exam_warning_id {} not found'.format(exam_warning_id)}), 404
+        
+        # update description
+        if action == 'description':
+            exam_warning.description = data['description']
+        
+        # update warning time
+        if action == 'warning_time':
+            exam_warning.warning_time = datetime.utcnow()
+        
+        # db.session.commit()
+        return jsonify({'message':'Exam warning '+action+' has updated for exam_recording_id {}'.format(exam_warning.exam_recording_id)}), 200
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning/delete', methods=('DELETE',))
-def delete_exam_warning(): #arpita to do
+def delete_exam_warning():
     """
     Deletes existing exam warning record.
     """
@@ -442,9 +466,14 @@ def delete_exam_warning(): #arpita to do
         exam_warning_id = request.args.get('exam_warning_id', default=-1, type=int)
         if exam_warning_id==-1:
             return jsonify({ 'message': 'Parameter exam_warning_id is required' }), 404
-        # try get existing exam recording
+        # try get existing exam recording  
+        # note from Arpita: if we've gotten the exam_warning_id above and checked that it exists, do we need to do it again?
         # check if we're allowed to delete it
         # if yes,
+        if exam_warning_id:
+            # db.session.delete(exam_warning_id)
+            # db.session.commit()
+            print("hola")
         # return successful message
         return '', 204
     except exc.SQLAlchemyError as e:
