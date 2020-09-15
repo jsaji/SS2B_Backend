@@ -11,6 +11,7 @@ from sqlalchemy.orm import relationship
 #from sqlalchemy.ext.declarative import declarative_base
 #from sqlalchemy_imageattach.entity import Image, image_attachment
 from werkzeug.security import generate_password_hash, check_password_hash
+from .services.misc import datetime_to_str
 
 db = SQLAlchemy()
 
@@ -99,8 +100,8 @@ class Exam(db.Model):
             'exam_name':self.exam_name,
             'subject_id':self.subject_id,
             'login_code':self.login_code,
-            'start_date':self.start_date.strftime("%Y-%m-%d %H:%M:%S"),
-            'end_date':self.end_date.strftime("%Y-%m-%d %H:%M:%S"),
+            'start_date':datetime_to_str(self.start_date),
+            'end_date':datetime_to_str(self.end_date),
             'duration':self.duration.strftime("%H:%M:%S"),
             'document_link':self.document_link
         }
@@ -130,8 +131,8 @@ class ExamRecording(db.Model):
             'exam_recording_id':self.exam_recording_id,
             'exam_id':self.exam_id,
             'user_id':self.user_id,
-            'time_started': (self.time_started.strftime("%Y-%m-%d %H:%M:%S") if self.time_started is not None else None),
-            'time_ended': (self.time_ended.strftime("%Y-%m-%d %H:%M:%S") if self.time_ended is not None else None),
+            'time_started':datetime_to_str(self.time_started),
+            'time_ended':datetime_to_str(self.time_ended),
             'video_link':self.video_link
         }
 
@@ -152,6 +153,6 @@ class ExamWarning(db.Model):
         return {
             'exam_warning_id':self.exam_warning_id,
             'exam_recording_id':self.exam_recording_id,
-            'warning_time':self.warning_time.strftime("%Y-%m-%d %H:%M:%S"),
+            'warning_time':datetime_to_str(self.warning_time),
             'description':self.description
         }

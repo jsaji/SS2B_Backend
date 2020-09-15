@@ -11,7 +11,7 @@ from dateutil import parser
 from sqlalchemy import exc
 from functools import wraps
 from .models import db, User, Exam, ExamRecording, ExamWarning, required_fields
-from .services.misc import generate_exam_code, confirm_examiner, pre_init_check, InvalidPassphrase, MissingModelFields
+from .services.misc import generate_exam_code, confirm_examiner, pre_init_check, InvalidPassphrase, MissingModelFields, datetime_to_str
 import jwt
 import json
 import math
@@ -391,16 +391,22 @@ def get_exam_warning():
 
         order_by = request.args.get('order_by', default="warning_time").lower()
         order = request.args.get('order', default="desc").lower()
+        group_by = request.args.get('group_by', default="user").lower()
 
         page_number = request.args.get('page_number', default=1, type=int)
         results_length = request.args.get('results_length', default=25, type=int)
         if page_number < 1: page_number = 1
         if results_length < 1 or results_length > 100: results_length = 25
         
-        results = ExamWarning.query
+        results = db.session.query(User, Exam, ExamRecording, ExamWarning).\
+                    filter(User.user_id==ExamRecording.user_id).\
+                    filter(Exam.exam_id==ExamRecording.exam_id).\
+                    filter(ExamWarning.exam_recording_id==ExamRecording.exam_recording_id).\
+                    filter(User.is_examiner==False)
+
         # Filters results
-        if exam_warning_id: results = results.filter_by(exam_warning_id=exam_warning_id)
-        if exam_recording_id: results = results.filter_by(exam_recording_id=exam_recording_id)
+        if exam_warning_id: results = results.filter(ExamWarning.exam_warning_id==exam_warning_id)
+        if exam_recording_id: results = results.filter(ExamRecording.exam_recording_id==exam_recording_id)
         if period_start: results = results.filter(ExamWarning.warning_time >= period_start)
         if period_end: results = results.filter(ExamWarning.warning_time <= period_end)
 
@@ -415,9 +421,44 @@ def get_exam_warning():
         results_end_index = page_number*results_length
         total_pages = math.ceil(len(results)/results_length)
         results = results[results_end_index-results_length:results_end_index]
-        exam_warnings = [r.to_dict() for r in results]
 
-        return jsonify({'exam_warnings':exam_warnings, 'total_pages':total_pages}), 200
+        payload = []
+        if group_by == "user":
+            pass
+        elif group_by == "exam":
+            pass
+
+        user_index_dict = {}
+        exam_recording_index_dict = {}
+        for u, e, er, ew in results:
+            
+            if u.user_id not in user_index_dict:
+                payload.append({
+                    'user_id':u.user_id,
+                    'first_name':u.first_name,
+                    'last_name':u.last_name,
+                    'exam_recordings':[]
+                })
+                user_index_dict[u.user_id] = len(payload)-1
+            
+            if er.exam_recording_id not in exam_recording_index_dict:
+                payload[user_index_dict[u.user_id]]['exam_recordings'].append({
+                    'exam_name':e.exam_name,
+                    'subject_id':e.subject_id,
+                    'time_started':datetime_to_str(er.time_started),
+                    'time_ended':datetime_to_str(er.time_ended),
+                    'video_link':er.video_link,
+                    'exam_warnings':[]
+                })
+                exam_recording_index_dict[er.exam_recording_id] = len(payload[user_index_dict[u.user_id]]['exam_recordings'])-1
+            
+            payload[user_index_dict[u.user_id]]['exam_recordings'][exam_recording_index_dict[er.exam_recording_id]]['exam_warnings'].append({
+                'exam_warning_id':ew.exam_warning_id,
+                'warning_time':datetime_to_str(ew.warning_time),
+                'description':ew.description
+            })
+
+        return jsonify({'exam_warnings':payload, 'total_pages':total_pages}), 200
     except exc.SQLAlchemyError as e:
         return jsonify({ 'message': e.args }), 500
 

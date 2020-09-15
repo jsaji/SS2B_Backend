@@ -1,6 +1,12 @@
 import os
 import random
 import string
+from datetime import datetime
+
+def datetime_to_str(datetime_obj):
+    if datetime_obj:
+        return datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+    return None
 
 charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!0123456789'
 
