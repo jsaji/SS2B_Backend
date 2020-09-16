@@ -116,10 +116,10 @@ def get_exam():
         # Filters query results using request params
         results, next_page_exists = filter_results(results_query, Exam)
         exams = []
-        for e, c in results:
+        for e, er_count in results:
             exams.append({
                 **e.to_dict(),
-                'exam_recordings':c
+                'exam_recordings':er_count
             })
         return jsonify({'exams':exams, 'next_page_exists': next_page_exists}), 200
     except exc.SQLAlchemyError as e:
@@ -190,13 +190,13 @@ def get_exam_recording():
         results_query = db.session.query(User, Exam, ExamRecording, func.count(ExamWarning.exam_recording_id)).\
                         filter(User.user_id==ExamRecording.user_id).\
                         filter(Exam.exam_id==ExamRecording.exam_id).\
-                        outerjoin(ExamRecording, ExamRecording.exam_recording_id==ExamWarning.exam_recording_id).\
-                        group_by(ExamWarning.exam_recording_id)
+                        outerjoin(ExamWarning, ExamWarning.exam_recording_id==ExamRecording.exam_recording_id).\
+                        group_by(ExamRecording.exam_recording_id)
                         
         results, next_page_exists = filter_results(results_query, ExamRecording)
 
         exam_recordings = []
-        for u, e, er, c in results:
+        for u, e, er, ew_count in results:
             exam_recordings.append({
                 'user_id':u.user_id,
                 'first_name':u.first_name,
@@ -207,7 +207,7 @@ def get_exam_recording():
                 'time_started':datetime_to_str(er.time_started),
                 'time_ended':datetime_to_str(er.time_ended),
                 'video_link':er.video_link,
-                'warning_count':c
+                'warning_count':ew_count
             })
         return jsonify({'exam_recordings':exam_recordings, 'next_page_exists':next_page_exists}), 200
 
@@ -396,9 +396,19 @@ def get_examinee():
     Returned results are limited by results_length and page_number.
     """
     try:
-        results_query = User.query
+        results_query = db.session.query(User, func.count(ExamRecording.exam_id), func.count(ExamWarning.exam_recording_id)).\
+                        outerjoin(ExamRecording, User.user_id==ExamRecording.user_id).\
+                        outerjoin(ExamWarning, ExamWarning.exam_recording_id==ExamRecording.exam_recording_id).\
+                        group_by(User.user_id)
+
         results, next_page_exists = filter_results(results_query, User)
-        users = [r.to_dict() for r in results]
+        users = []
+        for u, er_count, ew_count in results:
+            users.append({
+                **u.to_dict(),
+                'exam_recordings':er_count,
+                'exam_warnings':ew_count
+            })
         return jsonify({'users':users, 'next_page_exists':next_page_exists}), 200
     except exc.SQLAlchemyError as e:
         return jsonify({ 'message': e.args }), 500
