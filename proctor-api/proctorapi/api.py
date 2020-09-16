@@ -48,7 +48,7 @@ def register():
         return jsonify({ 'message': e.args }), 400
     except exc.IntegrityError:
         db.session.rollback()
-        return jsonify({ 'message': 'User with user_id {} exists.'.format(data['user_id']) }), 409
+        return jsonify({ 'message': 'User with id {} exists.'.format(data['user_id']) }), 409
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -145,17 +145,18 @@ def update_exam(): #arpita to do
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam/delete/<int:exam_id>', methods=('DELETE',))
-def delete_exam():
+def delete_exam(exam_id):
     """
     Deletes an existing exam record, dependent on whether it has already started
     """
     try:
         exam = Exam.query.get(exam_id)
-        if exam <= start_date:
-            # db.session.delete(exam)
-            # db.session.commit()
-            print("hola")
-            return '', 204
+        if exam:
+            if exam.start_date < datetime.utcnow():
+                db.session.delete(exam)
+                db.session.commit()
+                return jsonify(exam.to_dict()), 204
+            return jsonify({'message':'Exam with id {} cannot be deleted as it has already started/ended.'}), 405
         return jsonify({'message':'Exam with id {} could not be found'}), 404
     except exc.SQLAlchemyError as e:
         db.session.rollback()
@@ -170,6 +171,12 @@ def create_exam_recording():
     try:
         data = request.get_json()
         pre_init_check(required_fields['examrecording'], **data)
+
+        if not (data and data.get('override') and data.get('email') and data.get('password') and User.authenticate(**data).is_examiner):
+            existing_recording = ExamRecording.query.filter_by(user_id=data['user_id'], exam_id=data['exam_id']).first()
+            if existing_recording:
+                return jsonify({'message':('Exam with id {0} has already been attempted by user with id {1}. ' + 
+                                'Contact an administrator to override.').format(data['exam_id'], data['user_id'])}), 409
         examRecording = ExamRecording(**data)
         db.session.add(examRecording)
         db.session.commit()
@@ -198,6 +205,7 @@ def get_exam_recording():
         exam_recordings = []
         for u, e, er, ew_count in results:
             exam_recordings.append({
+                'exam_recording_id':er.exam_recording_id,
                 'user_id':u.user_id,
                 'first_name':u.first_name,
                 'last_name':u.last_name,
@@ -221,35 +229,31 @@ def update_exam_recording():
     Updates existing exam recording record, limited by the parameter action (start, end, video_link)
     """
     try:
-        
-        # Gets action, either start or end
-        action = request.args.get('action', default='').lower()
-        
         data = request.json()
-        # Preliminary checks
-        if not data.get('exam_recording_id'):
-            return jsonify({'message':'No exam_recording_id included in payload'}), 400
         
+        if not data.get('exam_recording_id') or not data.get('action'):
+            return jsonify({'message':'No exam_recording_id / action included in payload'}), 400
+        
+        action = data['action']
         exam_recording_id = data['exam_recording_id']
         exam_recording = ExamRecording.query.get(exam_recording_id)
         if exam_recording is None:
-            return jsonify({'message':'Exam recording with exam_recording_id {} not found'.format(exam_recording_id)}), 404
+            return jsonify({'message':'Exam recording with id {} not found'.format(exam_recording_id)}), 404
         
-        # If start, start the exam recording, if end, end exam recording and save chanegs
-        if action == 'start':
-            exam_recording.time_started = datetime.utcnow()
-        elif action == 'end':
+        if action == 'end' and exam_recording.time_ended is None:
+            # If end, end exam recording
             exam_recording.time_ended = datetime.utcnow()
-        elif action == 'video_link':
+        elif action == 'update_link':
+            # If update video link, do so
             if not data.get('video_link'):
                 return jsonify({'message':'No video_link included in payload'}), 400
             exam_recording.video_link = data['video_link']
         else:
-            return jsonify({'message':'Include parameter action: start, end'}), 400
+            return jsonify({'message':'Include parameter action: end, update_link'}), 400
         
         db.session.commit()
         
-        return jsonify({'message':'Exam recording has '+action+'ed for user_id {}'.format(exam_recording.user_id)}), 200
+        return jsonify(exam_recording_id.to_dict()), 200
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -260,12 +264,15 @@ def delete_exam_recording(exam_recording_id):
     Deletes existing exam recording record.
     """
     try:
+        data = request.get_json()
+        if not (data and data.get('email') and data.get('password') and User.authenticate(**data).is_examiner):
+            return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
         exam_recording = ExamRecording.query.get(exam_recording_id)
         if exam_recording:
             db.session.delete(exam_recording)
             db.session.commit()
-            return '', 204
-        return jsonify({'message':'Exam recording with id {} could not be found'}), 404
+            return jsonify(exam_recording.to_dict()), 200
+        return jsonify({'message':'Exam recording with id {} could not be found'.format(exam_recording_id)}), 404
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -330,60 +337,42 @@ def get_exam_warning():
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning/update', methods=('POST',))
-def update_exam_warning(): #arpita to do
+def update_exam_warning():
     """
     Updates existing exam warning record.
     """
     try:
-        # try get data
-        # find the existing model
-        # return successful message
-        # return jsonify(examwarning.to_dict()), 200
-        action = request.args.get('action', default='').lower()
-
         data = request.json()
-
         if not data.get('exam_warning_id'):
             return jsonify({'message':'No exam_warning_id included in payload'}), 400
 
         exam_warning_id = data['exam_warning_id']
         exam_warning = ExamWarning.query.get(exam_warning_id)
         if exam_warning is None:
-            return jsonify({'message':'Exam warning with exam_warning_id {} not found'.format(exam_warning_id)}), 404
+            return jsonify({'message':'Exam warning with id {} not found'.format(exam_warning_id)}), 404
         
-        # update description
-        if action == 'description':
-            exam_warning.description = data['description']
-        
-        # update warning time
-        if action == 'warning_time':
-            exam_warning.warning_time = datetime.utcnow()
-        
-        # db.session.commit()
-        return jsonify({'message':'Exam warning '+action+' has updated for exam_recording_id {}'.format(exam_warning.exam_recording_id)}), 200
+        if data.get('description'): exam_warning.description = data['description']
+        if data.get('warning_time'): exam_warning.description = parser.parse(data['warning_time']).replace(tzinfo=None)
+        db.session.commit()
+
+        return jsonify({'exam_warning':exam_warning.to_dict()}), 200
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examiner/exam_warning/delete', methods=('DELETE',))
-def delete_exam_warning():
+@api.route('/examiner/exam_warning/delete/<int:exam_warning_id>', methods=('DELETE',))
+def delete_exam_warning(exam_warning_id):
     """
     Deletes existing exam warning record.
     """
     try:
-        exam_warning_id = request.args.get('exam_warning_id', default=-1, type=int)
-        if exam_warning_id==-1:
-            return jsonify({ 'message': 'Parameter exam_warning_id is required' }), 404
-        # try get existing exam recording  
-        # note from Arpita: if we've gotten the exam_warning_id above and checked that it exists, do we need to do it again?
-        # check if we're allowed to delete it
-        # if yes,
-        if exam_warning_id:
-            # db.session.delete(exam_warning_id)
-            # db.session.commit()
-            print("hola")
-        # return successful message
-        return '', 204
+        exam_warning = ExamWarning.query.get(exam_warning_id)
+        if exam_warning:
+            db.session.delete(exam_warning)
+            db.session.commit()
+            return jsonify(exam_warning.to_dict()), 200
+        return jsonify({ 'message': 'Exam warning with id {} could not be found'.format(exam_warning_id)}), 404
+        
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500

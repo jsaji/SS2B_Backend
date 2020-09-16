@@ -39,7 +39,7 @@ class User(db.Model):
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_date = db.Column(db.DateTime, default=datetime.utcnow)
     
-    exam_recordings = relationship("ExamRecording", backref="users")
+    exam_recordings = relationship("ExamRecording", backref="users", cascade='all, delete')
 
     def __init__(self, user_id, first_name, last_name, password, **kwargs):
         self.user_id = user_id
@@ -83,7 +83,7 @@ class Exam(db.Model):
     duration = db.Column(db.Time, default="02:30:00")
     document_link = db.Column(db.String(255), nullable=True)
 
-    exam_recordings = relationship('ExamRecording', uselist=False, backref="exams")
+    exam_recordings = relationship('ExamRecording', uselist=False, backref="exams", cascade='all, delete')
 
     def __init__(self, exam_name, subject_id, login_code, start_date, end_date, duration, document_link=None, **kwargs):
         self.exam_name = exam_name
@@ -117,7 +117,7 @@ class ExamRecording(db.Model):
     time_ended = db.Column(db.DateTime, nullable=True)
     video_link = db.Column(db.String(255), nullable=True)
     
-    warnings = relationship("ExamWarning", backref='examRecordings')
+    warnings = relationship("ExamWarning", backref='examRecordings', cascade='all, delete')
 
     def __init__(self, exam_id, user_id, time_started=None, time_ended=None, video_link=None):
         self.exam_id = exam_id
