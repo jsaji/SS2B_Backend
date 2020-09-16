@@ -396,18 +396,16 @@ def get_examinee():
     Returned results are limited by results_length and page_number.
     """
     try:
-        results_query = db.session.query(User, func.count(ExamRecording.exam_id), func.count(ExamWarning.exam_recording_id)).\
-                        outerjoin(ExamRecording, User.user_id==ExamRecording.user_id).\
-                        outerjoin(ExamWarning, ExamWarning.exam_recording_id==ExamRecording.exam_recording_id).\
+        results_query = db.session.query(User, func.count(ExamRecording.user_id)).\
+                        outerjoin(ExamRecording, ExamRecording.user_id==User.user_id).\
                         group_by(User.user_id)
 
         results, next_page_exists = filter_results(results_query, User)
         users = []
-        for u, er_count, ew_count in results:
+        for u, er_count in results:
             users.append({
                 **u.to_dict(),
-                'exam_recordings':er_count,
-                'exam_warnings':ew_count
+                'exam_recordings':er_count
             })
         return jsonify({'users':users, 'next_page_exists':next_page_exists}), 200
     except exc.SQLAlchemyError as e:
