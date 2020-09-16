@@ -361,7 +361,7 @@ def update_exam_warning():
         
         if data.get('description'): exam_warning.description = data['description']
         if data.get('warning_time'): exam_warning.warning_time = parser.parse(data['warning_time']).replace(tzinfo=None)
-        #db.session.commit()
+        db.session.commit()
 
         return jsonify(exam_warning.to_dict()), 200
     except exc.SQLAlchemyError as e:
