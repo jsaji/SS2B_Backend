@@ -294,10 +294,19 @@ def create_exam_warning():
     try:
         data = request.get_json()
         pre_init_check(required_fields['examwarning'], **data)
+        prev_warnings = ExamWarning.query.filter_by(exam_recording_id=data['exam_recording_id'])
         exam_warning = ExamWarning(**data)
         db.session.add(exam_warning)
+        # Checks how many previous warnings for the same exam
+        if len(prev_warnings) == 2:
+            # If the new warning reaches the limit, end the exam
+            exam_recording = ExamRecording.query.get(data['exam_recording_id'])
+            exam_recording.time_ended = datetime.utcnow()
+            # End livestream somehow here
+            
         db.session.commit()
         return jsonify(exam_warning.to_dict()), 201
+        
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
