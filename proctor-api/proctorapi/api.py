@@ -8,7 +8,7 @@ from flask import Blueprint, jsonify, request, make_response, current_app
 from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
 from dateutil import parser
-from sqlalchemy import exc
+from sqlalchemy import exc, func
 from functools import wraps
 from .models import db, User, Exam, ExamRecording, ExamWarning, required_fields
 from .services.misc import generate_exam_code, confirm_examiner, pre_init_check, InvalidPassphrase, MissingModelFields, datetime_to_str
@@ -110,11 +110,18 @@ def get_exam():
     """
     try:
         # Query to run
-        results_query = Exam.query
+        results_query = db.session.query(Exam, func.count(ExamRecording.exam_id)).\
+                        outerjoin(Exam, Exam.exam_id==ExamRecording.exam_id).\
+                        group_by(ExamRecording.exam_id)
         # Filters query results using request params
         results, next_page_exists = filter_results(results_query, Exam)
-        exam_dict = [r.to_dict() for r in results]
-        return jsonify({'exams':exam_dict, 'next_page_exists': next_page_exists}), 200
+        exams = []
+        for e, c in results:
+            exams.append({
+                **e.to_dict(),
+                'exam_recordings':c
+            })
+        return jsonify({'exams':exams, 'next_page_exists': next_page_exists}), 200
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -180,17 +187,29 @@ def get_exam_recording():
     Returned results are limited by results_length and page_number.
     """
     try:
+        results_query = db.session.query(User, Exam, ExamRecording, func.count(ExamWarning.exam_recording_id)).\
+                        filter(User.user_id==ExamRecording.user_id).\
+                        filter(Exam.exam_id==ExamRecording.exam_id).\
+                        outerjoin(ExamRecording, ExamRecording.exam_recording_id==ExamWarning.exam_recording_id).\
+                        group_by(ExamWarning.exam_recording_id)
+                        
+        results, next_page_exists = filter_results(results_query, ExamRecording)
 
-        results_query = ExamRecording.query
-
-        results = filter_results(results_query, ExamRecording)
-
-        results = results.all()
-
-        exam_recordings = [r.to_dict() for r in results]
-
-        payload = {'exam_recordings':exam_recordings, 'total_pages':total_pages}
-        return jsonify(payload), 200
+        exam_recordings = []
+        for u, e, er, c in results:
+            exam_recordings.append({
+                'user_id':u.user_id,
+                'first_name':u.first_name,
+                'last_name':u.last_name,
+                'exam_id':e.exam_id,
+                'exam_name':e.exam_name,
+                'subject_id':e.subject_id,
+                'time_started':datetime_to_str(er.time_started),
+                'time_ended':datetime_to_str(er.time_ended),
+                'video_link':er.video_link,
+                'warning_count':c
+            })
+        return jsonify({'exam_recordings':exam_recordings, 'next_page_exists':next_page_exists}), 200
 
     except exc.SQLAlchemyError as e:
         db.session.rollback()
@@ -379,7 +398,6 @@ def get_examinee():
     try:
         results_query = User.query
         results, next_page_exists = filter_results(results_query, User)
-
         users = [r.to_dict() for r in results]
         return jsonify({'users':users, 'next_page_exists':next_page_exists}), 200
     except exc.SQLAlchemyError as e:
@@ -436,6 +454,10 @@ def get_request_args():
     args['login_code'] = request.args.get('login_code', default=None)
     args['exam_name'] = request.args.get('exam_name', default=None)
 
+    args['warning_count'] = request.args.get('warning_count', default=None, type=int)
+    args['min_warnings'] = request.args.get('min_warnings', default=None, type=int)
+    args['max_warnings'] = request.args.get('max_warnings', default=None, type=int)
+
     args['period_start'] = request.args.get('period_start', default=timedelta(days=10))
     args['period_end'] = request.args.get('period_end', default=timedelta(days=10))
     if args['period_start'] == timedelta(days=10): args['period_start'] = None
@@ -464,13 +486,13 @@ def filter_results(results, main_class=None):
 
     if args['exam_warning_id']: results = results.filter(ExamWarning.exam_warning_id==args['exam_warning_id'])
     if args['exam_recording_id']: results = results.filter(ExamRecording.exam_recording_id==args['exam_recording_id'])
-    if args['exam_id']: results = results.filter(Exam.exam_id==args['exam_id'])
     if args['subject_id']: results = results.filter(Exam.subject_id==args['subject_id'])
     if args['exam_name']: results = results.filter(Exam.exam_name.startswith(args['exam_name']))
 
     if main_class == ExamWarning:
         if args['period_start']: results = results.filter(ExamWarning.warning_time >= args['period_start'])
         if args['period_end']: results = results.filter(ExamWarning.warning_time <= args['period_end'])
+        
         if args['order_by'] == 'something':
             pass
         else:
@@ -478,6 +500,10 @@ def filter_results(results, main_class=None):
             else: results = results.order_by(ExamWarning.warning_time.desc())
 
     elif main_class == ExamRecording:
+        if args['exam_id']: results = results.filter(ExamRecording.exam_id==args['exam_id'])
+        if args['warning_count']: results = results.having(func.count(ExamWarning.exam_recording_id)==args['warning_count'])
+        if args['min_warnings']: results = results.having(func.count(ExamWarning.exam_recording_id)>=args['min_warnings'])
+        if args['max_warnings']: results = results.having(func.count(ExamWarning.exam_recording_id)<=args['max_warnings'])
         if args['period_start']: results = results.filter(ExamRecording.time_started >= args['period_start'])
         if args['period_end']: results = results.filter(ExamRecording.time_ended <= args['period_end'])
         if args['in_progress'] is not None:
@@ -491,6 +517,7 @@ def filter_results(results, main_class=None):
             else: results = results.order_by(ExamRecording.time_started.desc())
 
     elif main_class == Exam:
+        if args['exam_id']: results = results.filter(Exam.exam_id==args['exam_id'])
         if args['login_code']: results = results.filter(Exam.login_code.startswith(args['login_code']))
         if args['period_start']: results = results.filter(Exam.start_date >= args['period_start'])
         if args['period_end']: results = results.filter(Exam.end_date <= args['period_end'])
