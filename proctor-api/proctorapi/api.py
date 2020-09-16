@@ -111,8 +111,8 @@ def get_exam():
     try:
         # Query to run
         results_query = db.session.query(Exam, func.count(ExamRecording.exam_id)).\
-                        outerjoin(Exam, Exam.exam_id==ExamRecording.exam_id).\
-                        group_by(ExamRecording.exam_id)
+                        outerjoin(ExamRecording, ExamRecording.exam_id==Exam.exam_id).\
+                        group_by(Exam.exam_id)
         # Filters query results using request params
         results, next_page_exists = filter_results(results_query, Exam)
         exams = []
@@ -152,12 +152,12 @@ def delete_exam(exam_id):
     try:
         exam = Exam.query.get(exam_id)
         if exam:
-            if exam.start_date < datetime.utcnow():
+            if exam.start_date > datetime.utcnow():
                 db.session.delete(exam)
                 db.session.commit()
-                return jsonify(exam.to_dict()), 204
-            return jsonify({'message':'Exam with id {} cannot be deleted as it has already started/ended.'}), 405
-        return jsonify({'message':'Exam with id {} could not be found'}), 404
+                return jsonify(exam.to_dict()), 200
+            return jsonify({'message':'Exam with id {} cannot be deleted as it has already started.'.format(exam_id)}), 405
+        return jsonify({'message':'Exam with id {} could not be found'.format(exam_id)}), 404
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -172,11 +172,14 @@ def create_exam_recording():
         data = request.get_json()
         pre_init_check(required_fields['examrecording'], **data)
 
-        if not (data and data.get('override') and data.get('email') and data.get('password') and User.authenticate(**data).is_examiner):
-            existing_recording = ExamRecording.query.filter_by(user_id=data['user_id'], exam_id=data['exam_id']).first()
-            if existing_recording:
+        existing_recording = ExamRecording.query.filter_by(user_id=data['user_id'], exam_id=data['exam_id']).first()
+        if existing_recording:
+            if not (data and data.get('email') and data.get('password')):
+                return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
+            examiner = User.authenticate(**data)
+            if not (examiner and examiner.is_examiner):
                 return jsonify({'message':('Exam with id {0} has already been attempted by user with id {1}. ' + 
-                                'Contact an administrator to override.').format(data['exam_id'], data['user_id'])}), 409
+                            'Contact an administrator to override.').format(data['exam_id'], data['user_id'])}), 409
         examRecording = ExamRecording(**data)
         db.session.add(examRecording)
         db.session.commit()
@@ -229,7 +232,7 @@ def update_exam_recording():
     Updates existing exam recording record, limited by the parameter action (start, end, video_link)
     """
     try:
-        data = request.json()
+        data = request.get_json()
         
         if not data.get('exam_recording_id') or not data.get('action'):
             return jsonify({'message':'No exam_recording_id / action included in payload'}), 400
@@ -240,8 +243,10 @@ def update_exam_recording():
         if exam_recording is None:
             return jsonify({'message':'Exam recording with id {} not found'.format(exam_recording_id)}), 404
         
-        if action == 'end' and exam_recording.time_ended is None:
+        if action == 'end':
             # If end, end exam recording
+            if exam_recording.time_ended is not None:
+                return jsonify({'message':'Exam recording with id {} has already ended'.format(exam_recording_id)}), 400
             exam_recording.time_ended = datetime.utcnow()
         elif action == 'update_link':
             # If update video link, do so
@@ -253,7 +258,7 @@ def update_exam_recording():
         
         db.session.commit()
         
-        return jsonify(exam_recording_id.to_dict()), 200
+        return jsonify(exam_recording.to_dict()), 200
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -265,7 +270,10 @@ def delete_exam_recording(exam_recording_id):
     """
     try:
         data = request.get_json()
-        if not (data and data.get('email') and data.get('password') and User.authenticate(**data).is_examiner):
+        if not (data and data.get('email') and data.get('password')):
+            return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
+        examiner = User.authenticate(**data)
+        if not (examiner and examiner.is_examiner):
             return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
         exam_recording = ExamRecording.query.get(exam_recording_id)
         if exam_recording:
@@ -342,7 +350,7 @@ def update_exam_warning():
     Updates existing exam warning record.
     """
     try:
-        data = request.json()
+        data = request.get_json()
         if not data.get('exam_warning_id'):
             return jsonify({'message':'No exam_warning_id included in payload'}), 400
 
@@ -352,10 +360,10 @@ def update_exam_warning():
             return jsonify({'message':'Exam warning with id {} not found'.format(exam_warning_id)}), 404
         
         if data.get('description'): exam_warning.description = data['description']
-        if data.get('warning_time'): exam_warning.description = parser.parse(data['warning_time']).replace(tzinfo=None)
-        db.session.commit()
+        if data.get('warning_time'): exam_warning.warning_time = parser.parse(data['warning_time']).replace(tzinfo=None)
+        #db.session.commit()
 
-        return jsonify({'exam_warning':exam_warning.to_dict()}), 200
+        return jsonify(exam_warning.to_dict()), 200
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -445,7 +453,7 @@ def get_request_args():
 
     args['exam_warning_id'] = request.args.get('exam_warning_id', default=None, type=int)
     args['exam_recording_id'] = request.args.get('exam_recording_id', default=None, type=int)
-    args['in_progress'] = request.args.get('in_progress', default=None, type=str)
+    args['in_progress'] = request.args.get('in_progress', default='', type=str).lower()
     args['exam_id'] = request.args.get('exam_id', default=None, type=int)
     args['subject_id'] = request.args.get('subject_id', default=None, type=int)
     args['login_code'] = request.args.get('login_code', default=None)
@@ -503,9 +511,8 @@ def filter_results(results, main_class=None):
         if args['max_warnings']: results = results.having(func.count(ExamWarning.exam_recording_id)<=args['max_warnings'])
         if args['period_start']: results = results.filter(ExamRecording.time_started >= args['period_start'])
         if args['period_end']: results = results.filter(ExamRecording.time_ended <= args['period_end'])
-        if args['in_progress'] is not None:
-            if in_progress: results = results.filter(ExamRecording.time_ended is None)
-            else: results = results.filter(ExamRecording.time_ended is not None)
+        if args['in_progress']=='true': results = results.filter(ExamRecording.time_ended == None)
+        elif args['in_progress']=='false': results = results.filter(ExamRecording.time_ended < datetime.utcnow())
         if args['order_by'] == 'time_ended':
             if args['order'] == 'asc': results = results.order_by(ExamRecording.time_ended.asc())
             else: results = results.order_by(ExamRecording.time_ended.desc())
@@ -518,9 +525,8 @@ def filter_results(results, main_class=None):
         if args['login_code']: results = results.filter(Exam.login_code.startswith(args['login_code']))
         if args['period_start']: results = results.filter(Exam.start_date >= args['period_start'])
         if args['period_end']: results = results.filter(Exam.end_date <= args['period_end'])
-        if args['in_progress'] is not None:
-            if in_progress: results = results.filter(Exam.end_date >= datetime.utcnow())
-            else: results = results.filter(Exam.end_date <= datetime.utcnow())
+        if args['in_progress'] == 'true': results = results.filter(Exam.end_date >= datetime.utcnow(), Exam.start_date <= datetime.utcnow())
+        elif args['in_progress'] == 'false': results = results.filter(Exam.end_date <= datetime.utcnow())
         if args['order_by'] == 'end_date':
             if args['order'] == 'asc': results = results.order_by(Exam.end_date.asc())
             else: results = results.order_by(Exam.start_date.desc())
