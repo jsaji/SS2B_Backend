@@ -11,7 +11,7 @@ from dateutil import parser
 from sqlalchemy import exc, func
 from functools import wraps
 from .models import db, User, Exam, ExamRecording, ExamWarning, required_fields
-from .services.misc import generate_exam_code, confirm_examiner, pre_init_check, InvalidPassphrase, MissingModelFields, datetime_to_str
+from .services.misc import generate_exam_code, confirm_examiner, pre_init_check, InvalidPassphrase, MissingModelFields, datetime_to_str, parse_datetime
 import jwt
 import json
 import math
@@ -127,19 +127,45 @@ def get_exam():
         return jsonify({ 'message': e.args }), 500
     
 @api.route('/examiner/exam/update', methods=('POST',))
-def update_exam(): #arpita to do
+def update_exam():
     """
     Updates an existing exam record, dependent on whether it has already started
     """
     try:
-        print("hola")
-        # try get data
-        # find the existing model
-        # return successful message
-        # return jsonify(u.to_dict()), 200
-        data = request.json()
+        data = request.get_json()
+        
+        if not data.get('exam_id'):
+            return jsonify({'message':'No exam_id included in payload'}), 400
 
-        return '', 204
+        exam_id = data['exam_id']
+        exam = Exam.query.get(exam_id)
+        
+        if exam is None:
+            return jsonify({'message':'Exam with id {} not found'.format(exam_id)}), 404
+        
+        if exam.start_date < datetime.utcnow():
+            if data.get('exam_name'):
+                exam.exam_name = data['exam_name']  
+            if data.get('subject_id'):
+                exam.subject_id = data['subject_id']
+            if data.get('start_date'):
+                start_date = parse_datetime(data['start_date'])
+                if start_date < datetime.utcnow():
+                    return jsonify({'message':'Exam start_date has passed'}), 400
+                exam.start_date = start_date
+            if data.get('end_date'):
+                end_date = parse_datetime(data['end_date'])
+                if end_date < datetime.utcnow():
+                    return jsonify({'message':'Exam end_date has passed'}), 400
+                exam.end_date = end_date
+            if data.get('duration'):
+                exam.duration = parse_datetime(data['duration']).time()
+            if data.get('document_link'):
+                exam.document_link = data['document_link']
+
+        db.session.commit()
+
+        return jsonify(exam.to_dict()), 200
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -236,7 +262,7 @@ def update_exam_recording():
         
         if not data.get('exam_recording_id') or not data.get('action'):
             return jsonify({'message':'No exam_recording_id / action included in payload'}), 400
-        
+
         action = data['action']
         exam_recording_id = data['exam_recording_id']
         exam_recording = ExamRecording.query.get(exam_recording_id)

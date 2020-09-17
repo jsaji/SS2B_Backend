@@ -11,7 +11,7 @@ from sqlalchemy.orm import relationship
 #from sqlalchemy.ext.declarative import declarative_base
 #from sqlalchemy_imageattach.entity import Image, image_attachment
 from werkzeug.security import generate_password_hash, check_password_hash
-from .services.misc import datetime_to_str
+from .services.misc import datetime_to_str, parse_datetime
 
 db = SQLAlchemy()
 
@@ -20,12 +20,6 @@ required_fields = {'user':['user_id', 'first_name', 'last_name', 'password'],
                     'examrecording':['exam_id', 'user_id'],
                     'examwarning':['exam_recording_id', 'warning_time', 'description']}
 
-def parse_datetime(input_var):
-    if isinstance(input_var, str):
-        return parser.parse(input_var).replace(tzinfo=None)
-    elif input_var is None:
-        return input_var
-    return input_var.replace(tzinfo=None)
 
 class User(db.Model):
     __tablename__ = 'users'

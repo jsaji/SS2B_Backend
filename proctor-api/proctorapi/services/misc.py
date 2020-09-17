@@ -2,6 +2,14 @@ import os
 import random
 import string
 from datetime import datetime
+from dateutil import parser
+
+def parse_datetime(input_var):
+    if isinstance(input_var, str):
+        return parser.parse(input_var).replace(tzinfo=None)
+    elif input_var is None:
+        return input_var
+    return input_var.replace(tzinfo=None)
 
 def datetime_to_str(datetime_obj):
     if datetime_obj:
