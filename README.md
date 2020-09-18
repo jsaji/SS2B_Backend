@@ -19,7 +19,7 @@ Execute the following bash command from the project root folder to start the API
 ```bash
 python appserver.py
 ```
- 
+The deskcheck endpoint requires [ODAPI](https://github.com/jsaji/Object-Detection-API) to be set up and running (refer to its README for more instructions).
 
 ## Making database migrations using SQLAlchemy ORM
 Create an initial migration file to translate the classes in models.py to SQL that will generate corresponding tables

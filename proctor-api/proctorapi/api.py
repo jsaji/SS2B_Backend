@@ -7,6 +7,9 @@ api.py
 from flask import Blueprint, jsonify, request, make_response, current_app
 from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
+from werkzeug.datastructures import FileStorage
+from urllib3.exceptions import MaxRetryError
+import requests
 from dateutil import parser
 from sqlalchemy import exc, func
 from functools import wraps
@@ -17,6 +20,8 @@ import json
 import math
 
 api = Blueprint('api', __name__)
+
+ODAPI_URL = 'http://127.0.0.1:5000/'
 
 @api.route('/')
 def index():
@@ -442,6 +447,32 @@ def get_examinee():
         return jsonify({'users':users, 'next_page_exists':next_page_exists}), 200
     except exc.SQLAlchemyError as e:
         return jsonify({ 'message': e.args }), 500
+
+@api.route('/examinee/deskcheck', methods=('POST',))
+def deskcheck():
+    """
+    Detects unallowed objects in an image (.png, .jpg, etc)
+    and returns object classes, confidence levels and coordinates on the image
+    """
+    try:
+        # Checks if image file is received
+        if request.files.get('image'):
+            # Image is of type FileStorage, so it can be read directly
+            with request.files['image'] as image:
+                files = [('images', image.read())]
+                # Sends request to ODAPI
+                r = requests.post(ODAPI_URL+'detections', files=files)
+                if r.status_code == 200:
+                    # Return json of request to client
+                    data = r.json()
+                    return jsonify(data), 200
+                raise Exception("Unsuccessful attempt to detect objects")
+        return jsonify({ 'message': 'No image sent' }), 400
+    except (MaxRetryError, requests.ConnectionError, requests.ConnectTimeout) as e:
+        return jsonify({ 'message': 'Could not connect to ODAPI.' }), 500
+    except Exception as e:
+        return jsonify({ 'message': e.args }), 500
+    
 
 # This is a decorator function which will be used to protect authentication-sensitive API endpoints
 def token_required(f):
