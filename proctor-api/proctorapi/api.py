@@ -98,6 +98,8 @@ def create_exam():
                 data['login_code'] = potential_login_code
                 break
         exam = Exam(**data)
+        if exam.start_date > exam.end_date:
+            raise Exception('Exam end_date precedes Exam start_date')
         db.session.add(exam)
         db.session.commit()
         return jsonify(exam.to_dict()), 201
@@ -105,6 +107,8 @@ def create_exam():
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
         db.session.rollback()
+        return jsonify({ 'message': e.args }), 500
+    except Exception as e:
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam', methods=('GET',))
@@ -127,8 +131,7 @@ def get_exam():
                 'exam_recordings':er_count
             })
         return jsonify({'exams':exams, 'next_page_exists': next_page_exists}), 200
-    except exc.SQLAlchemyError as e:
-        db.session.rollback()
+    except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
     
 @api.route('/examiner/exam/update', methods=('POST',))
@@ -148,7 +151,7 @@ def update_exam():
         if exam is None:
             return jsonify({'message':'Exam with id {} not found'.format(exam_id)}), 404
         
-        if exam.start_date < datetime.utcnow():
+        if exam.start_date > datetime.utcnow():
             if data.get('exam_name'):
                 exam.exam_name = data['exam_name']  
             if data.get('subject_id'):
@@ -156,24 +159,31 @@ def update_exam():
             if data.get('start_date'):
                 start_date = parse_datetime(data['start_date'])
                 if start_date < datetime.utcnow():
-                    return jsonify({'message':'Exam start_date has passed'}), 400
+                    raise Exception('Exam start_date has passed')
                 exam.start_date = start_date
             if data.get('end_date'):
                 end_date = parse_datetime(data['end_date'])
                 if end_date < datetime.utcnow():
-                    return jsonify({'message':'Exam end_date has passed'}), 400
+                    raise Exception('Exam end_date has passed')
                 exam.end_date = end_date
             if data.get('duration'):
                 exam.duration = parse_datetime(data['duration']).time()
             if data.get('document_link'):
                 exam.document_link = data['document_link']
 
-        db.session.commit()
+            if exam.start_date > exam.end_date:
+                raise Exception('Exam end_date precedes Exam start_date.')
 
-        return jsonify(exam.to_dict()), 200
+            #db.session.commit()
+
+            return jsonify(exam.to_dict()), 200
+
+        raise Exception('Cannot update an Exam that has already started.')
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
+    except Exception as e:
+        return jsonify({ 'message': e.args }), 400
 
 @api.route('/examiner/exam/delete/<int:exam_id>', methods=('DELETE',))
 def delete_exam(exam_id):
@@ -187,12 +197,13 @@ def delete_exam(exam_id):
                 db.session.delete(exam)
                 db.session.commit()
                 return jsonify(exam.to_dict()), 200
-            return jsonify({'message':'Exam with id {} cannot be deleted as it has already started.'.format(exam_id)}), 405
-        return jsonify({'message':'Exam with id {} could not be found'.format(exam_id)}), 404
+            return jsonify({'message':['Exam with id {} cannot be deleted as it has already started.'.format(exam_id)]}), 405
+        return jsonify({'message':['Exam with id {} could not be found'.format(exam_id)]}), 404
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
-
+    except Exception as e:
+        return jsonify({ 'message': e.args }), 500
 
 @api.route('/examinee/exam_recording/create', methods=('POST',))
 def create_exam_recording():
@@ -219,6 +230,8 @@ def create_exam_recording():
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
         db.session.rollback()
+        return jsonify({ 'message': e.args }), 500
+    except Exception as e:
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examinee/exam_recording', methods=('GET',))
@@ -253,8 +266,7 @@ def get_exam_recording():
             })
         return jsonify({'exam_recordings':exam_recordings, 'next_page_exists':next_page_exists}), 200
 
-    except exc.SQLAlchemyError as e:
-        db.session.rollback()
+    except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
     
 @api.route('/examinee/exam_recording/update', methods=('POST',))
@@ -293,6 +305,8 @@ def update_exam_recording():
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
+    except Exception as e:
+        return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_recording/delete/<int:exam_recording_id>', methods=('DELETE',))
 def delete_exam_recording(exam_recording_id):
@@ -314,6 +328,8 @@ def delete_exam_recording(exam_recording_id):
         return jsonify({'message':'Exam recording with id {} could not be found'.format(exam_recording_id)}), 404
     except exc.SQLAlchemyError as e:
         db.session.rollback()
+        return jsonify({ 'message': e.args }), 500
+    except Exception as e:
         return jsonify({ 'message': e.args }), 500
 
 
@@ -342,6 +358,8 @@ def create_exam_warning():
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
         db.session.rollback()
+        return jsonify({ 'message': e.args }), 500
+    except Exception as e:
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning', methods=('GET',))
@@ -381,7 +399,7 @@ def get_exam_warning():
             })
 
         return jsonify({'exam_warnings':payload, 'next_page_exists':next_page_exists}), 200
-    except exc.SQLAlchemyError as e:
+    except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning/update', methods=('POST',))
@@ -407,6 +425,8 @@ def update_exam_warning():
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
+    except Exception as e:
+        return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning/delete/<int:exam_warning_id>', methods=('DELETE',))
 def delete_exam_warning(exam_warning_id):
@@ -423,6 +443,8 @@ def delete_exam_warning(exam_warning_id):
         
     except exc.SQLAlchemyError as e:
         db.session.rollback()
+        return jsonify({ 'message': e.args }), 500
+    except Exception as e:
         return jsonify({ 'message': e.args }), 500
 
 
@@ -445,7 +467,7 @@ def get_examinee():
                 'exam_recordings':er_count
             })
         return jsonify({'users':users, 'next_page_exists':next_page_exists}), 200
-    except exc.SQLAlchemyError as e:
+    except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examinee/deskcheck', methods=('POST',))
@@ -458,15 +480,15 @@ def deskcheck():
         # Checks if image file is received
         if request.files.get('image'):
             # Image is of type FileStorage, so it can be read directly
-            with request.files['image'] as image:
-                files = [('images', image.read())]
-                # Sends request to ODAPI
-                r = requests.post(ODAPI_URL+'detections', files=files)
-                if r.status_code == 200:
-                    # Return json of request to client
-                    data = r.json()
-                    return jsonify(data), 200
-                raise Exception("Unsuccessful attempt to detect objects")
+            image = request.files['image']
+            files = [('images', image.read())]
+            # Sends request to ODAPI
+            r = requests.post(ODAPI_URL+'detections', files=files)
+            if r.status_code == 200:
+                # Return json of request to client
+                data = r.json()
+                return jsonify(data), 200
+            raise Exception("Unsuccessful attempt to detect objects")
         return jsonify({ 'message': 'No image sent' }), 400
     except (MaxRetryError, requests.ConnectionError, requests.ConnectTimeout) as e:
         return jsonify({ 'message': 'Could not connect to ODAPI.' }), 500
