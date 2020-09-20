@@ -7,7 +7,7 @@
 
 class BaseConfig(object):
     
-    f= open("proctorapi/db_link.txt","r")
+    f= open("proctor-api/db_link.txt","r")
     db_link = f.read()
     f.close()
     # NEED TO USE ENV VARIABLES HERE

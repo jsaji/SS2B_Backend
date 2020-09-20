@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 40f12e774305
-Revises: 747898b944a6
-Create Date: 2020-09-03 12:20:01.639531
+Revision ID: 4f39a5e92de2
+Revises: 
+Create Date: 2020-09-11 08:59:39.211209
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
-revision = '40f12e774305'
-down_revision = '747898b944a6'
+revision = '4f39a5e92de2'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -25,16 +25,17 @@ def upgrade():
     sa.Column('login_code', sa.String(length=255), nullable=False),
     sa.Column('start_date', sa.DateTime(), nullable=True),
     sa.Column('end_date', sa.DateTime(), nullable=True),
-    sa.Column('duration', sa.Integer(), nullable=True),
+    sa.Column('duration', sa.Time(), nullable=True),
+    sa.Column('document_link', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('exam_id')
     )
     op.create_table('users',
-    sa.Column('user_id', mysql.INTEGER(unsigned=True), nullable=False),
+    sa.Column('user_id', mysql.INTEGER(unsigned=True), autoincrement=False, nullable=False),
     sa.Column('first_name', sa.String(length=191), nullable=False),
     sa.Column('last_name', sa.String(length=191), nullable=False),
     sa.Column('password', sa.String(length=255), nullable=False),
-    sa.Column('confirm_examiner', sa.String(length=255), nullable=True),
-    sa.Column('auth_image', sa.String(length=255), nullable=False),
+    sa.Column('is_examiner', sa.Integer(), nullable=True),
+    sa.Column('auth_image', sa.String(length=255), nullable=True),
     sa.Column('created_date', sa.DateTime(), nullable=True),
     sa.Column('updated_date', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('user_id')
@@ -51,12 +52,12 @@ def upgrade():
     sa.PrimaryKeyConstraint('exam_recording_id')
     )
     op.create_table('examWarnings',
-    sa.Column('warning_id', mysql.INTEGER(unsigned=True), nullable=False),
+    sa.Column('exam_warning_id', mysql.INTEGER(unsigned=True), nullable=False),
     sa.Column('exam_recording_id', mysql.INTEGER(unsigned=True), nullable=False),
     sa.Column('warning_time', sa.DateTime(), nullable=True),
     sa.Column('description', sa.String(length=500), nullable=False),
     sa.ForeignKeyConstraint(['exam_recording_id'], ['examRecordings.exam_recording_id'], ),
-    sa.PrimaryKeyConstraint('warning_id')
+    sa.PrimaryKeyConstraint('exam_warning_id')
     )
     # ### end Alembic commands ###
 

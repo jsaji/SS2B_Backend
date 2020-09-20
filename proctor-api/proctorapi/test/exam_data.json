@@ -1,0 +1,282 @@
+[
+{
+"subject_id": 397527,
+"exam_name": "Oyondu Final Exam",
+"start_date": "2020-03-09 04:30:00",
+"duration": "03:00:00",
+"end_date": "2020-04-08 04:30:00"
+},
+{
+"subject_id": 568020,
+"exam_name": "Oyoloo Final Exam",
+"start_date": "2020-03-09 20:00:00",
+"duration": "02:30:00",
+"end_date": "2020-04-08 20:00:00"
+},
+{
+"subject_id": 248843,
+"exam_name": "Skidoo Final Exam",
+"start_date": "2020-03-16 07:30:00",
+"duration": "02:30:00",
+"end_date": "2020-04-15 07:30:00"
+},
+{
+"subject_id": 806061,
+"exam_name": "Quire Final Exam",
+"start_date": "2020-04-25 23:00:00",
+"duration": "02:30:00",
+"end_date": "2020-05-25 23:00:00"
+},
+{
+"subject_id": 131353,
+"exam_name": "Meedoo Final Exam",
+"start_date": "2020-04-24 10:30:00",
+"duration": "02:30:00",
+"end_date": "2020-05-24 10:30:00"
+},
+{
+"subject_id": 745186,
+"exam_name": "Skaboo Final Exam",
+"start_date": "2020-04-26 05:00:00",
+"duration": "02:30:00",
+"end_date": "2020-05-26 05:00:00"
+},
+{
+"subject_id": 302498,
+"exam_name": "Skyble Final Exam",
+"start_date": "2020-04-01 02:00:00",
+"duration": "02:30:00",
+"end_date": "2020-05-01 02:00:00"
+},
+{
+"subject_id": 896810,
+"exam_name": "Tagchat Final Exam",
+"start_date": "2020-04-03 02:30:00",
+"duration": "02:30:00",
+"end_date": "2020-05-03 02:30:00"
+},
+{
+"subject_id": 309392,
+"exam_name": "Zoombeat Final Exam",
+"start_date": "2020-04-04 06:00:00",
+"duration": "02:30:00",
+"end_date": "2020-05-04 06:00:00"
+},
+{
+"subject_id": 958094,
+"exam_name": "Chatterbridge Final Exam",
+"start_date": "2020-05-21 21:30:00",
+"duration": "02:30:00",
+"end_date": "2020-06-20 21:30:00"
+},
+{
+"subject_id": 180965,
+"exam_name": "Flashset Final Exam",
+"start_date": "2020-05-22 03:30:00",
+"duration": "03:00:00",
+"end_date": "2020-06-21 03:30:00"
+},
+{
+"subject_id": 2295,
+"exam_name": "Einti Final Exam",
+"start_date": "2020-05-25 22:00:00",
+"duration": "02:30:00",
+"end_date": "2020-06-24 22:00:00"
+},
+{
+"subject_id": 407733,
+"exam_name": "Ntags Final Exam",
+"start_date": "2020-05-26 03:00:00",
+"duration": "02:30:00",
+"end_date": "2020-06-25 03:00:00"
+},
+{
+"subject_id": 867009,
+"exam_name": "Realbridge Final Exam",
+"start_date": "2020-05-11 01:00:00",
+"duration": "03:00:00",
+"end_date": "2020-06-10 01:00:00"
+},
+{
+"subject_id": 463542,
+"exam_name": "Shuffledrive Final Exam",
+"start_date": "2020-06-18 08:30:00",
+"duration": "02:30:00",
+"end_date": "2020-07-18 08:30:00"
+},
+{
+"subject_id": 875151,
+"exam_name": "Plajo Final Exam",
+"start_date": "2020-06-17 05:30:00",
+"duration": "02:30:00",
+"end_date": "2020-07-17 05:30:00"
+},
+{
+"subject_id": 918200,
+"exam_name": "Dynabox Final Exam",
+"start_date": "2020-06-27 22:00:00",
+"duration": "02:30:00",
+"end_date": "2020-07-27 22:00:00"
+},
+{
+"subject_id": 878256,
+"exam_name": "Meembee Final Exam",
+"start_date": "2020-06-24 08:30:00",
+"duration": "03:00:00",
+"end_date": "2020-07-24 08:30:00"
+},
+{
+"subject_id": 739209,
+"exam_name": "Vinte Final Exam",
+"start_date": "2020-06-17 07:00:00",
+"duration": "03:00:00",
+"end_date": "2020-07-17 07:00:00"
+},
+{
+"subject_id": 401443,
+"exam_name": "LiveZ Final Exam",
+"start_date": "2020-07-15 12:30:00",
+"duration": "02:30:00",
+"end_date": "2020-08-14 12:30:00"
+},
+{
+"subject_id": 298767,
+"exam_name": "Divavu Final Exam",
+"start_date": "2020-07-09 03:30:00",
+"duration": "02:30:00",
+"end_date": "2020-08-08 03:30:00"
+},
+{
+"subject_id": 610812,
+"exam_name": "Leexo Final Exam",
+"start_date": "2020-07-19 01:30:00",
+"duration": "03:00:00",
+"end_date": "2020-08-18 01:30:00"
+},
+{
+"subject_id": 437603,
+"exam_name": "LiveZ Final Exam",
+"start_date": "2020-07-19 01:30:00",
+"duration": "03:30:00",
+"end_date": "2020-08-18 01:30:00"
+},
+{
+"subject_id": 386499,
+"exam_name": "Divanoodle Final Exam",
+"start_date": "2020-07-17 04:30:00",
+"duration": "03:30:00",
+"end_date": "2020-08-16 04:30:00"
+},
+{
+"subject_id": 830787,
+"exam_name": "Flipstorm Final Exam",
+"start_date": "2020-08-16 20:30:00",
+"duration": "03:00:00",
+"end_date": "2020-09-15 20:30:00"
+},
+{
+"subject_id": 273420,
+"exam_name": "Photojam Final Exam",
+"start_date": "2020-08-10 19:00:00",
+"duration": "03:00:00",
+"end_date": "2020-09-09 19:00:00"
+},
+{
+"subject_id": 84420,
+"exam_name": "Babblestorm Final Exam",
+"start_date": "2020-08-27 23:30:00",
+"duration": "03:00:00",
+"end_date": "2020-09-26 23:30:00"
+},
+{
+"subject_id": 931539,
+"exam_name": "Dabfeed Final Exam",
+"start_date": "2020-08-09 12:00:00",
+"duration": "03:30:00",
+"end_date": "2020-09-08 12:00:00"
+},
+{
+"subject_id": 867152,
+"exam_name": "Jabbertype Final Exam",
+"start_date": "2020-08-01 00:00:00",
+"duration": "03:30:00",
+"end_date": "2020-08-31 00:00:00"
+},
+{
+"subject_id": 948683,
+"exam_name": "Omba Final Exam",
+"start_date": "2020-09-04 07:30:00",
+"duration": "03:30:00",
+"end_date": "2020-10-04 07:30:00"
+},
+{
+"subject_id": 226947,
+"exam_name": "Photospace Final Exam",
+"start_date": "2020-09-29 10:00:00",
+"duration": "03:30:00",
+"end_date": "2020-10-29 10:00:00"
+},
+{
+"subject_id": 865429,
+"exam_name": "Minyx Final Exam",
+"start_date": "2020-09-16 16:00:00",
+"duration": "03:30:00",
+"end_date": "2020-10-16 16:00:00"
+},
+{
+"subject_id": 559193,
+"exam_name": "Pixonyx Final Exam",
+"start_date": "2020-09-11 07:30:00",
+"duration": "03:00:00",
+"end_date": "2020-10-11 07:30:00"
+},
+{
+"subject_id": 915648,
+"exam_name": "Yombu Final Exam",
+"start_date": "2020-09-15 14:30:00",
+"duration": "03:30:00",
+"end_date": "2020-10-15 14:30:00"
+},
+{
+"subject_id": 286257,
+"exam_name": "Zoomdog Final Exam",
+"start_date": "2020-10-06 18:00:00",
+"duration": "03:00:00",
+"end_date": "2020-11-05 18:00:00"
+},
+{
+"subject_id": 420904,
+"exam_name": "Thoughtstorm Final Exam",
+"start_date": "2020-10-21 18:30:00",
+"duration": "03:00:00",
+"end_date": "2020-11-20 18:30:00"
+},
+{
+"subject_id": 405338,
+"exam_name": "Oba Final Exam",
+"start_date": "2020-10-20 02:30:00",
+"duration": "03:30:00",
+"end_date": "2020-11-19 02:30:00"
+},
+{
+"subject_id": 754857,
+"exam_name": "Edgepulse Final Exam",
+"start_date": "2020-10-08 16:00:00",
+"duration": "03:00:00",
+"end_date": "2020-11-07 16:00:00"
+},
+{
+"subject_id": 194948,
+"exam_name": "Eidel Final Exam",
+"start_date": "2020-10-29 22:30:00",
+"duration": "03:00:00",
+"end_date": "2020-11-28 22:30:00"
+},
+{
+"subject_id": 832310,
+"exam_name": "Ozu Final Exam",
+"start_date": "2020-10-20 07:30:00",
+"duration": "03:00:00",
+"end_date": "2020-11-19 07:30:00"
+}
+]

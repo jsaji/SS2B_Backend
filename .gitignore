@@ -136,4 +136,11 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-proctor-api/proctorapi/db_link.txt
+
+# DB links (#2 can be used for local connections) / passwords
+db_link.txt
+db_link2.txt
+examiner_passphrase.txt
+
+# VS Code Settings
+.vscode/
