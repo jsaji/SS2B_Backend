@@ -91,26 +91,28 @@ def token_required(f):
 
 @api.route('face_authentication', methods=('POST',))
 def face_authentication():
-    image = request.files["image"]
-    user_id = request.form["user_id"]
-    image_name = image.filename
-    image.save(os.path.join(os.getcwd(), image_name))
-    image1 = face_recognition.load_image_file(image_name)
-    face_local1 = face_recognition.face_locations(image1)
-    image1_encode = face_recognition.face_encodings(image1, face_local1) [0]
+    try:
+        image = request.files["image"]
+        user_id = request.form["user_id"]
+        image_name = image.filename
+        image.save(os.path.join(os.getcwd(), image_name))
+        image1 = face_recognition.load_image_file(image_name)
+        face_local1 = face_recognition.face_locations(image1)
+        positive_id = False
+        if len(face_local1):
+            image1_encode = face_recognition.face_encodings(image1, face_local1)[0]
 
-    for root, dirs, files in os.walk('images/' + str(user_id)):
-        for file in files:
-            if file.endswith("png") or file.endswith("jpg"):
-                path = os.path.join(root, file)
-                image2 = face_recognition.load_image_file(path)
-                image2_encode = face_recognition.face_encodings(image2) [0]
+            for root, dirs, files in os.walk('images/' + str(user_id)):
+                for file in files:
+                    if file.endswith("png") or file.endswith("jpg"):
+                        path = os.path.join(root, file)
+                        image2 = face_recognition.load_image_file(path)
+                        image2_encode = face_recognition.face_encodings(image2) [0]
 
-                result = face_recognition.compare_faces([image1_encode], image2_encode)
-
-                if result[0]:
-                    os.remove(image_name)
-                    return jsonify({'user_id': user_id, 'positive_id': True}), 200
-
-    os.remove(image_name)
-    return jsonify({'message': 'Student not found', 'positive_id': False}), 500
+                        result = face_recognition.compare_faces([image1_encode], image2_encode)
+                        positive_id = result[0]
+                            
+        os.remove(image_name)
+        return jsonify({'user_id': user_id, 'positive_id': positive_id}), 200
+    except Exception as e:
+        return jsonify({'message': e.args}), 500
