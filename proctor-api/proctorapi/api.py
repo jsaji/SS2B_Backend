@@ -99,7 +99,7 @@ def face_authentication():
         image1 = face_recognition.load_image_file(image_name)
         face_local1 = face_recognition.face_locations(image1)
         positive_id = False
-        if len(face_local1):
+        if face_local1:
             image1_encode = face_recognition.face_encodings(image1, face_local1)[0]
 
             for root, dirs, files in os.walk('images/' + str(user_id)):
