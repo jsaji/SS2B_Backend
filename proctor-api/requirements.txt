@@ -4,6 +4,7 @@ asgiref==3.2.3
 certifi==2019.11.28
 chardet==3.0.4
 click==7.1.1
+cmake==3.18.2.post1
 db==0.1.1
 Django==3.0.2
 djangorestframework==3.11.0
