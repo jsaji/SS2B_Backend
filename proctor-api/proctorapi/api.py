@@ -3,8 +3,7 @@ api.py
 - provides the API endpoints for consuming and producing
   REST requests and responses
 """
-
-from flask import Blueprint, jsonify, request, make_response, current_app
+from flask import Blueprint, jsonify, request, make_response, current_app, render_template, Response
 from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
 from werkzeug.datastructures import FileStorage
@@ -18,6 +17,12 @@ from .services.misc import generate_exam_code, confirm_examiner, pre_init_check,
 import jwt
 import json
 import math
+from PIL import Image
+import cv2
+import os
+import numpy
+import pickle
+import face_recognition
 
 api = Blueprint('api', __name__)
 
@@ -332,7 +337,6 @@ def delete_exam_recording(exam_recording_id):
     except Exception as e:
         return jsonify({ 'message': e.args }), 500
 
-
 @api.route('/examiner/exam_warning/create', methods=('POST',))
 def create_exam_warning():
     """
@@ -496,6 +500,35 @@ def deskcheck():
         return jsonify({ 'message': e.args }), 500
     
 
+@api.route('/examinee/face_authentication', methods=('POST',))
+def face_authentication():
+    try:
+        image = request.files["image"]
+        user_id = request.form["user_id"]
+        image_name = image.filename
+        image.save(os.path.join(os.getcwd(), image_name))
+        image1 = face_recognition.load_image_file(image_name)
+        face_local1 = face_recognition.face_locations(image1)
+        positive_id = False
+        if face_local1:
+            image1_encode = face_recognition.face_encodings(image1, face_local1)[0]
+
+            for root, dirs, files in os.walk('images/' + str(user_id)):
+                for file in files:
+                    if file.endswith("png") or file.endswith("jpg"):
+                        path = os.path.join(root, file)
+                        image2 = face_recognition.load_image_file(path)
+                        image2_encode = face_recognition.face_encodings(image2) [0]
+
+                        result = face_recognition.compare_faces([image1_encode], image2_encode)
+                        positive_id = result[0]
+                            
+        os.remove(image_name)
+        return jsonify({'user_id': user_id, 'positive_id': positive_id}), 200
+    except Exception as e:
+        return jsonify({'message': e.args}), 500
+    
+    
 # This is a decorator function which will be used to protect authentication-sensitive API endpoints
 def token_required(f):
     @wraps(f)
@@ -517,7 +550,7 @@ def token_required(f):
         try:
             token = auth_headers[1]
             data = jwt.decode(token, current_app.config['SECRET_KEY'])
-            user = User.query.filter_by(email=data['sub']).first()
+            user = User.query.filter_by(user_id=data['sub']).first()
             if not user:
                 raise RuntimeError('User not found')
             return f(user, *args, **kwargs)
