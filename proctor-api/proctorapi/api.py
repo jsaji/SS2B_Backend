@@ -15,6 +15,7 @@ from functools import wraps
 from .models import db, User, Exam, ExamRecording, ExamWarning, required_fields
 from .services.misc import generate_exam_code, confirm_examiner, pre_init_check, InvalidPassphrase, MissingModelFields, datetime_to_str, parse_datetime
 import jwt
+import traceback
 import json
 import math
 from PIL import Image
@@ -114,6 +115,7 @@ def create_exam():
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam', methods=('GET',))
@@ -188,6 +190,7 @@ def update_exam():
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 400
 
 @api.route('/examiner/exam/delete/<int:exam_id>', methods=('DELETE',))
@@ -208,6 +211,7 @@ def delete_exam(exam_id):
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examinee/exam_recording/create', methods=('POST',))
@@ -237,6 +241,7 @@ def create_exam_recording():
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examinee/exam_recording', methods=('GET',))
@@ -311,6 +316,7 @@ def update_exam_recording():
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_recording/delete/<int:exam_recording_id>', methods=('DELETE',))
@@ -335,6 +341,7 @@ def delete_exam_recording(exam_recording_id):
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning/create', methods=('POST',))
@@ -364,6 +371,7 @@ def create_exam_warning():
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning', methods=('GET',))
@@ -430,6 +438,7 @@ def update_exam_warning():
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examiner/exam_warning/delete/<int:exam_warning_id>', methods=('DELETE',))
@@ -449,6 +458,7 @@ def delete_exam_warning(exam_warning_id):
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 
@@ -497,6 +507,7 @@ def deskcheck():
     except (MaxRetryError, requests.ConnectionError, requests.ConnectTimeout) as e:
         return jsonify({ 'message': 'Could not connect to ODAPI.' }), 500
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
     
 
@@ -521,11 +532,12 @@ def face_authentication():
                         image2_encode = face_recognition.face_encodings(image2) [0]
 
                         result = face_recognition.compare_faces([image1_encode], image2_encode)
-                        positive_id = result[0]
+                        positive_id = bool(result[0])
                             
         os.remove(image_name)
         return jsonify({'user_id': user_id, 'positive_id': positive_id}), 200
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({'message': e.args}), 500
     
     
