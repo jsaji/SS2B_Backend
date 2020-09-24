@@ -509,11 +509,36 @@ def deskcheck():
     except Exception as e:
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
-    
+
+@api.route('/examinee/upload_face', methods=('POST',))
+def upload_face():
+    try:
+        if None in (request.files.get('image'), request.form.get('user_id')):
+            return jsonify({'message':['No user_id / image included in payload']}), 400
+
+        image = request.files["image"]
+        image_name = image.filename
+        user_id = request.form["user_id"]
+        path = 'images/'+str(user_id)
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                os.remove(os.path.join(root, file))
+        img = Image.open(image)
+        img = img.convert('RGB')
+        img.save(path+"/face.jpg")
+        
+        return jsonify({'message':'Face image for user {} uploaded successfully'.format(user_id)}), 200
+    except Exception as e:
+        print(traceback.format_exc())
+        return jsonify({'message': e.args}), 500
 
 @api.route('/examinee/face_authentication', methods=('POST',))
 def face_authentication():
     try:
+        if None in (request.files.get('image'), request.form.get('user_id')):
+            return jsonify({'message':['No user_id / image included in payload']}), 400
         image = request.files["image"]
         user_id = request.form["user_id"]
         image_name = image.filename
