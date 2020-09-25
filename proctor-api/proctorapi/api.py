@@ -226,12 +226,10 @@ def create_exam_recording():
         existing_recording = ExamRecording.query.filter_by(user_id=data['user_id'], exam_id=data['exam_id']).first()
         exam = Exam.query.get(data['exam_id'])
         if existing_recording or exam.end_date >= datetime.utcnow():
-            if not (data and data.get('email') and data.get('password')):
-                return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
             examiner = User.authenticate(**data)
             if not (examiner and examiner.is_examiner):
-                return jsonify({'message':('Exam with id {0} has already been attempted by user with id {1}. ' + 
-                            'Contact an administrator to override.').format(data['exam_id'], data['user_id'])}), 409
+                return jsonify({'message':("The exam has already ended or has been previously attempted. "
+                                              "Contact an administrator to override.")}), 401                
         
         # Creates exam recording
         exam_recording = ExamRecording(**data)
@@ -340,8 +338,6 @@ def delete_exam_recording(exam_recording_id):
     """
     try:
         data = request.get_json()
-        if not (data and data.get('email') and data.get('password')):
-            return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
         examiner = User.authenticate(**data)
         if not (examiner and examiner.is_examiner):
             return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
