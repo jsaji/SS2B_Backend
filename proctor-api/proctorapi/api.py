@@ -222,19 +222,20 @@ def create_exam_recording():
     try:
         data = request.get_json()
         pre_init_check(required_fields['examrecording'], **data)
-
+        # Checks for existing recordings or if exam has already ended - can be overrided to create new recording if authorised
         existing_recording = ExamRecording.query.filter_by(user_id=data['user_id'], exam_id=data['exam_id']).first()
-        if existing_recording:
-            if not (data and data.get('email') and data.get('password')):
-                return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
+        exam = Exam.query.get(data['exam_id'])
+        if existing_recording or exam.end_date >= datetime.utcnow():
             examiner = User.authenticate(**data)
             if not (examiner and examiner.is_examiner):
-                return jsonify({'message':('Exam with id {0} has already been attempted by user with id {1}. ' + 
-                            'Contact an administrator to override.').format(data['exam_id'], data['user_id'])}), 409
-        examRecording = ExamRecording(**data)
-        db.session.add(examRecording)
+                return jsonify({'message':("The exam has already ended or has been previously attempted. "
+                                              "Contact an administrator to override.")}), 401                
+        
+        # Creates exam recording
+        exam_recording = ExamRecording(**data)
+        db.session.add(exam_recording)
         db.session.commit()
-        return jsonify(examRecording.to_dict()), 201
+        return jsonify(exam_recording.to_dict()), 201
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
@@ -261,6 +262,15 @@ def get_exam_recording():
 
         exam_recordings = []
         for u, e, er, ew_count in results:
+            duration = e.duration
+            # If exam recording has not ended (or does not have a time_ended value)
+            if er.time_ended is None:
+                # Check if the time now has surpassed the latest possible finish time (recording start time + exam duration)
+                latest_finish_time = er.time_started + timedelta(hours=duration.hour, minutes=duration.minute)
+                if latest_finish_time <= datetime.utcnow():
+                    # If so, set the value to latest possible time
+                    er.time_ended = latest_finish_time
+            
             exam_recordings.append({
                 'exam_recording_id':er.exam_recording_id,
                 'user_id':u.user_id,
@@ -274,6 +284,8 @@ def get_exam_recording():
                 'video_link':er.video_link,
                 'warning_count':ew_count
             })
+        db.session.commit()
+
         return jsonify({'exam_recordings':exam_recordings, 'next_page_exists':next_page_exists}), 200
 
     except (Exception, exc.SQLAlchemyError) as e:
@@ -326,8 +338,6 @@ def delete_exam_recording(exam_recording_id):
     """
     try:
         data = request.get_json()
-        if not (data and data.get('email') and data.get('password')):
-            return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
         examiner = User.authenticate(**data)
         if not (examiner and examiner.is_examiner):
             return jsonify({'message':('This action is unauthorised. Contact an administrator to override.')}), 401
@@ -352,7 +362,7 @@ def create_exam_warning():
     try:
         data = request.get_json()
         pre_init_check(required_fields['examwarning'], **data)
-        prev_warnings = ExamWarning.query.filter_by(exam_recording_id=data['exam_recording_id'])
+        prev_warnings = ExamWarning.query.filter_by(exam_recording_id=data['exam_recording_id']).all()
         exam_warning = ExamWarning(**data)
         db.session.add(exam_warning)
         # Checks how many previous warnings for the same exam
@@ -363,7 +373,7 @@ def create_exam_warning():
             # End livestream somehow here
             
         db.session.commit()
-        return jsonify(exam_warning.to_dict()), 201
+        return jsonify({**exam_warning.to_dict(), 'warning_count':(len(prev_warnings)+1)}), 201
         
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
@@ -495,7 +505,7 @@ def deskcheck():
         if request.files.get('image'):
             # Image is of type FileStorage, so it can be read directly
             image = request.files['image']
-            files = [('images', image.read())]
+            files = [('image', image.read())]
             # Sends request to ODAPI
             r = requests.post(ODAPI_URL+'detections', files=files)
             if r.status_code == 200:
@@ -509,11 +519,36 @@ def deskcheck():
     except Exception as e:
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
-    
+
+@api.route('/examinee/upload_face', methods=('POST',))
+def upload_face():
+    try:
+        if None in (request.files.get('image'), request.form.get('user_id')):
+            return jsonify({'message':['No user_id / image included in payload']}), 400
+
+        image = request.files["image"]
+        image_name = image.filename
+        user_id = request.form["user_id"]
+        path = 'images/'+str(user_id)
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                os.remove(os.path.join(root, file))
+        img = Image.open(image)
+        img = img.convert('RGB')
+        img.save(path+"/face.jpg")
+        
+        return jsonify({'message':'Face image for user {} uploaded successfully'.format(user_id)}), 200
+    except Exception as e:
+        print(traceback.format_exc())
+        return jsonify({'message': e.args}), 500
 
 @api.route('/examinee/face_authentication', methods=('POST',))
 def face_authentication():
     try:
+        if None in (request.files.get('image'), request.form.get('user_id')):
+            return jsonify({'message':['No user_id / image included in payload']}), 400
         image = request.files["image"]
         user_id = request.form["user_id"]
         image_name = image.filename
