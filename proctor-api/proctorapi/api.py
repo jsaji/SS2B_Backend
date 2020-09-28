@@ -505,7 +505,7 @@ def deskcheck():
         if request.files.get('image'):
             # Image is of type FileStorage, so it can be read directly
             image = request.files['image']
-            files = [('images', image.read())]
+            files = [('image', image.read())]
             # Sends request to ODAPI
             r = requests.post(ODAPI_URL+'detections', files=files)
             if r.status_code == 200:
