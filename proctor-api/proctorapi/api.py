@@ -29,6 +29,8 @@ api = Blueprint('api', __name__)
 
 ODAPI_URL = 'http://127.0.0.1:5000/'
 
+MAX_WARNING_COUNT = 3
+
 @api.route('/')
 def index():
     """
@@ -366,11 +368,12 @@ def create_exam_warning():
         exam_warning = ExamWarning(**data)
         db.session.add(exam_warning)
         # Checks how many previous warnings for the same exam
-        if len(prev_warnings) == 2:
-            # If the new warning reaches the limit, end the exam
+        if len(prev_warnings) == MAX_WARNING_COUNT-1:
+            # If the new warning reaches the limit, end the exam if still in progress
             exam_recording = ExamRecording.query.get(data['exam_recording_id'])
-            exam_recording.time_ended = datetime.utcnow()
-            # End livestream somehow here
+            if exam_recording.time_ended is None:
+                exam_recording.time_ended = datetime.utcnow()
+                # End livestream somehow here
             
         db.session.commit()
         return jsonify({**exam_warning.to_dict(), 'warning_count':(len(prev_warnings)+1)}), 201
