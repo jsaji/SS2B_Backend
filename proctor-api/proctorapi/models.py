@@ -113,7 +113,7 @@ class ExamRecording(db.Model):
     
     warnings = relationship("ExamWarning", backref='examRecordings', cascade='all, delete')
 
-    def __init__(self, exam_id, user_id, time_started=None, time_ended=None, video_link=None):
+    def __init__(self, exam_id, user_id, time_started=None, time_ended=None, video_link=None, **kwargs):
         self.exam_id = exam_id
         self.user_id = user_id
         self.time_started = parse_datetime(time_started)
@@ -138,7 +138,7 @@ class ExamWarning(db.Model):
     warning_time = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String(500), nullable=False)
 
-    def __init__(self, exam_recording_id, warning_time, description):
+    def __init__(self, exam_recording_id, warning_time, description, **kwargs):
         self.exam_recording_id = exam_recording_id
         self.warning_time = parse_datetime(warning_time)
         self.description = description

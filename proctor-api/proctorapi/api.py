@@ -362,7 +362,7 @@ def create_exam_warning():
     try:
         data = request.get_json()
         pre_init_check(required_fields['examwarning'], **data)
-        prev_warnings = ExamWarning.query.filter_by(exam_recording_id=data['exam_recording_id'])
+        prev_warnings = ExamWarning.query.filter_by(exam_recording_id=data['exam_recording_id']).all()
         exam_warning = ExamWarning(**data)
         db.session.add(exam_warning)
         # Checks how many previous warnings for the same exam
@@ -373,7 +373,7 @@ def create_exam_warning():
             # End livestream somehow here
             
         db.session.commit()
-        return jsonify(exam_warning.to_dict()), 201
+        return jsonify({**exam_warning.to_dict(), 'warning_count':(len(prev_warnings)+1)}), 201
         
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
