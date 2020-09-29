@@ -5,6 +5,7 @@ models.py
 
 from datetime import datetime, timedelta
 from dateutil import parser
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
@@ -12,6 +13,7 @@ from sqlalchemy.orm import relationship
 #from sqlalchemy_imageattach.entity import Image, image_attachment
 from werkzeug.security import generate_password_hash, check_password_hash
 from .services.misc import datetime_to_str, parse_datetime
+import jwt
 
 db = SQLAlchemy()
 
@@ -33,6 +35,7 @@ class User(db.Model):
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_date = db.Column(db.DateTime, default=datetime.utcnow)
     
+    roles = db.relationship('Role', secondary='user_roles')
     exam_recordings = relationship("ExamRecording", backref="users", cascade='all, delete')
 
     def __init__(self, user_id, first_name, last_name, password, **kwargs):
@@ -56,6 +59,19 @@ class User(db.Model):
 
         return user
 
+    @classmethod
+    def decode_auth_token(cls, token):
+        """
+        Decodes the auth token
+        :param auth_token:
+        :return: integer|string
+        """
+        try:
+            payload = jwt.decode(token, current_app.config['SECRET_KEY'])
+            return payload['sub']
+        except Exception:
+            return 'Invalid token. Please log in again.'
+
     def to_dict(self):
         return {
             'user_id':self.user_id,
@@ -64,6 +80,16 @@ class User(db.Model):
             'is_examiner': self.is_examiner
         }
 
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(INTEGER(unsigned=True), primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+
+class UserRoles(db.Model):
+    __tablename__ = 'user_roles'
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(INTEGER(unsigned=True), db.ForeignKey('users.user_id', ondelete='CASCADE'))
+    role_id = db.Column(INTEGER(unsigned=True), db.ForeignKey('roles.id', ondelete='CASCADE'))
 
 class Exam(db.Model):
     __tablename__ = 'exams'
@@ -100,7 +126,6 @@ class Exam(db.Model):
             'document_link':self.document_link
         }
 
-
 class ExamRecording(db.Model):
     __tablename__ = 'examRecordings'
     
@@ -113,7 +138,7 @@ class ExamRecording(db.Model):
     
     warnings = relationship("ExamWarning", backref='examRecordings', cascade='all, delete')
 
-    def __init__(self, exam_id, user_id, time_started=None, time_ended=None, video_link=None, **kwargs):
+    def __init__(self, exam_id, user_id, time_started=None, time_ended=None, video_link=None):
         self.exam_id = exam_id
         self.user_id = user_id
         self.time_started = parse_datetime(time_started)
@@ -138,7 +163,7 @@ class ExamWarning(db.Model):
     warning_time = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String(500), nullable=False)
 
-    def __init__(self, exam_recording_id, warning_time, description, **kwargs):
+    def __init__(self, exam_recording_id, warning_time, description):
         self.exam_recording_id = exam_recording_id
         self.warning_time = parse_datetime(warning_time)
         self.description = description
