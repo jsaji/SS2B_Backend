@@ -277,15 +277,15 @@ def create_exam_recording():
                 examiner = User.authenticate(**data)
                 if not (examiner and examiner.is_examiner):
                     return jsonify({'message':("The exam has already ended or has been previously attempted. "
-                                                "Contact an administrator to override.")}), 401                
+                                                "Contact an administrator to override.")}), 401
             
             # Creates exam recording
             exam_recording = ExamRecording(**data)
             db.session.add(exam_recording)
             db.session.commit()
             return jsonify(exam_recording.to_dict()), 201
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
+        
+        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
@@ -343,8 +343,8 @@ def get_exam_recording():
             db.session.commit()
 
             return jsonify({'exam_recordings':exam_recordings, 'next_page_exists':next_page_exists}), 200
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
+        
+        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
     except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
     
