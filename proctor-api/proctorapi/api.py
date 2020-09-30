@@ -49,8 +49,8 @@ def register():
         pre_init_check(required_fields['user'], **data)
         user = User(**data)
         if data.get('examiner_passphrase'):
-            is_examiner = confirm_examiner(data['examiner_passphrase'])
-            if not is_examiner:
+            verified_examiner = confirm_examiner(data['examiner_passphrase'])
+            if not verified_examiner:
                 raise InvalidPassphrase()
             user.is_examiner = True
             examiner_role = Role.query.filter_by(name='Examiner').first()
@@ -124,8 +124,8 @@ def create_exam():
             db.session.add(exam)
             db.session.commit()
             return jsonify(exam.to_dict()), 201
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403
+        
+        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
@@ -144,23 +144,34 @@ def get_exam():
     try:
         user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
-
-        if examiner:
+        user = is_user(user_id)
+        if user:
             # Query to run
-            results_query = db.session.query(Exam, func.count(ExamRecording.exam_id)).\
-                            outerjoin(ExamRecording, ExamRecording.exam_id==Exam.exam_id).\
-                            group_by(Exam.exam_id)
-            # Filters query results using request params
-            results, next_page_exists = filter_results(results_query, Exam)
             exams = []
-            for e, er_count in results:
-                exams.append({
-                    **e.to_dict(),
-                    'exam_recordings':er_count
-                })
+            if examiner:
+                results_query = db.session.query(Exam, func.count(ExamRecording.exam_id)).\
+                                outerjoin(ExamRecording, ExamRecording.exam_id==Exam.exam_id).\
+                                group_by(Exam.exam_id)
+                # Filters query results using request params
+                results, next_page_exists = filter_results(results_query, Exam)
+                
+                for e, er_count in results:
+                    exams.append({
+                        **e.to_dict(),
+                        'exam_recordings':er_count
+                    })
+            else:
+                login_code = request.args.get('login_code', default=None)
+                results = Exam.query.filter_by(login_code=login_code).all()
+                next_page_exists = False
+                for e in results:
+                    exams.append({
+                        **e.to_dict(),
+                        'exam_recordings':0
+                    })
             return jsonify({'exams':exams, 'next_page_exists': next_page_exists}), 200
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403
+
+        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403
     except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
     
@@ -212,8 +223,7 @@ def update_exam():
                 return jsonify(exam.to_dict()), 200
 
             raise Exception('Cannot update an Exam that has already started.')
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403
+        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -248,6 +258,141 @@ def delete_exam(exam_id):
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
+@api.route('/examinee/exam_recording/create', methods=('POST',))
+def create_exam_recording():
+    """
+    Creates new exam recording record
+    """
+    try:
+        data = request.get_json()
+        user_id = authenticate_token(request)
+        user = is_user(user_id)
+
+        if user:
+            pre_init_check(required_fields['examrecording'], **data)
+            # Checks for existing recordings or if exam has already ended - can be overrided to create new recording if authorised
+            existing_recording = ExamRecording.query.filter_by(user_id=data['user_id'], exam_id=data['exam_id']).first()
+            exam = Exam.query.get(data['exam_id'])
+            if existing_recording or exam.end_date >= datetime.utcnow():
+                examiner = User.authenticate(**data)
+                if not (examiner and examiner.is_examiner):
+                    return jsonify({'message':("The exam has already ended or has been previously attempted. "
+                                                "Contact an administrator to override.")}), 401                
+            
+            # Creates exam recording
+            exam_recording = ExamRecording(**data)
+            db.session.add(exam_recording)
+            db.session.commit()
+            return jsonify(exam_recording.to_dict()), 201
+        else:
+            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
+    except MissingModelFields as e:
+        return jsonify({ 'message': e.args }), 400
+    except exc.SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({ 'message': e.args }), 500
+    except Exception as e:
+        print(traceback.format_exc())
+        return jsonify({ 'message': e.args }), 500
+
+@api.route('/examinee/exam_recording', methods=('GET',))
+def get_exam_recording():
+    """
+    Gets exam recordings, can be filtered by user_id, exam_id
+    Returned results are limited by results_length and page_number.
+    """
+    try:
+        # Users can get their own exam recordings, if they're an examiner they can get all of them
+        user_id = authenticate_token(request)
+        examiner = is_examiner(user_id)
+        getting_own_results = is_self(user_id)
+
+        if examiner or getting_own_results:
+            results_query = db.session.query(User, Exam, ExamRecording, func.count(ExamWarning.exam_recording_id)).\
+                            filter(User.user_id==ExamRecording.user_id).\
+                            filter(Exam.exam_id==ExamRecording.exam_id).\
+                            outerjoin(ExamWarning, ExamWarning.exam_recording_id==ExamRecording.exam_recording_id).\
+                            group_by(ExamRecording.exam_recording_id)
+                            
+            results, next_page_exists = filter_results(results_query, ExamRecording)
+
+            exam_recordings = []
+            for u, e, er, ew_count in results:
+                duration = e.duration
+                # If exam recording has not ended (or does not have a time_ended value)
+                if er.time_ended is None:
+                    # Check if the time now has surpassed the latest possible finish time (recording start time + exam duration)
+                    latest_finish_time = er.time_started + timedelta(hours=duration.hour, minutes=duration.minute)
+                    if latest_finish_time <= datetime.utcnow():
+                        # If so, set the value to latest possible time
+                        er.time_ended = latest_finish_time
+                
+                exam_recordings.append({
+                    'exam_recording_id':er.exam_recording_id,
+                    'user_id':u.user_id,
+                    'first_name':u.first_name,
+                    'last_name':u.last_name,
+                    'exam_id':e.exam_id,
+                    'exam_name':e.exam_name,
+                    'subject_id':e.subject_id,
+                    'time_started':datetime_to_str(er.time_started),
+                    'time_ended':datetime_to_str(er.time_ended),
+                    'video_link':er.video_link,
+                    'warning_count':ew_count
+                })
+            db.session.commit()
+
+            return jsonify({'exam_recordings':exam_recordings, 'next_page_exists':next_page_exists}), 200
+        else:
+            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
+    except (Exception, exc.SQLAlchemyError) as e:
+        return jsonify({ 'message': e.args }), 500
+    
+@api.route('/examinee/exam_recording/update', methods=('POST',))
+def update_exam_recording():
+    """
+    Updates existing exam recording record, limited by the parameter action (start, end, video_link)
+    """
+    try:
+        data = request.get_json()
+        user_id = authenticate_token(request)
+        examiner = is_examiner(user_id)
+        getting_own_results = is_self(user_id)
+        if examiner or getting_own_results:
+            if not data.get('exam_recording_id') or not data.get('action'):
+                return jsonify({'message':'No exam_recording_id / action included in payload'}), 400
+
+            action = data['action']
+            exam_recording_id = data['exam_recording_id']
+            exam_recording = ExamRecording.query.get(exam_recording_id)
+            if exam_recording is None:
+                return jsonify({'message':'Exam recording with id {} not found'.format(exam_recording_id)}), 404
+            
+            if action == 'end':
+                # If end, end exam recording
+                if exam_recording.time_ended is not None:
+                    return jsonify({'message':'Exam recording with id {} has already ended'.format(exam_recording_id)}), 400
+                exam_recording.time_ended = datetime.utcnow()
+            elif action == 'update_link':
+                # If update video link, do so
+                if not data.get('video_link'):
+                    return jsonify({'message':'No video_link included in payload'}), 400
+                exam_recording.video_link = data['video_link']
+            else:
+                return jsonify({'message':'Include parameter action: end, update_link'}), 400
+            
+            db.session.commit()
+            
+            return jsonify(exam_recording.to_dict()), 200
+        
+        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
+    except exc.SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({ 'message': e.args }), 500
+    except Exception as e:
+        print(traceback.format_exc())
+        return jsonify({ 'message': e.args }), 500
+
 @api.route('/examiner/exam_recording/<int:exam_recording_id>', methods=('DELETE',))
 def delete_exam_recording(exam_recording_id):
     """
@@ -263,8 +408,7 @@ def delete_exam_recording(exam_recording_id):
                 db.session.commit()
                 return jsonify(exam_recording.to_dict()), 200
             return jsonify({'message':'Exam recording with id {} could not be found'.format(exam_recording_id)}), 404
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403           
+        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403           
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -297,8 +441,8 @@ def create_exam_warning():
                 
             db.session.commit()
             return jsonify({**exam_warning.to_dict(), 'warning_count':(len(prev_warnings)+1)}), 201
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403           
+        
+        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403           
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
@@ -317,8 +461,8 @@ def get_exam_warning():
     try:
         user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
-
-        if examiner:
+        getting_own_results = is_self(user_id)
+        if examiner or getting_own_results:
             results_query = db.session.query(User, Exam, ExamRecording, ExamWarning).\
                         filter(User.user_id==ExamRecording.user_id).\
                         filter(Exam.exam_id==ExamRecording.exam_id).\
@@ -420,8 +564,8 @@ def get_examinee():
     try:
         user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
-
-        if examiner:
+        getting_own_results = is_self(user_id)
+        if examiner or getting_own_results:
             results_query = db.session.query(User, func.count(ExamRecording.user_id)).\
                             outerjoin(ExamRecording, ExamRecording.user_id==User.user_id).\
                             group_by(User.user_id)
@@ -434,142 +578,9 @@ def get_examinee():
                     'exam_recordings':er_count
                 })
             return jsonify({'users':users, 'next_page_exists':next_page_exists}), 200
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403                    
+        
+        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403                    
     except (Exception, exc.SQLAlchemyError) as e:
-        return jsonify({ 'message': e.args }), 500
-
-@api.route('/examinee/exam_recording/create', methods=('POST',))
-def create_exam_recording():
-    """
-    Creates new exam recording record
-    """
-    try:
-        data = request.get_json()
-        user_id = authenticate_token(request)
-        user = is_user(user_id)
-
-        if user:
-            pre_init_check(required_fields['examrecording'], **data)
-            # Checks for existing recordings or if exam has already ended - can be overrided to create new recording if authorised
-            existing_recording = ExamRecording.query.filter_by(user_id=data['user_id'], exam_id=data['exam_id']).first()
-            exam = Exam.query.get(data['exam_id'])
-            if existing_recording or exam.end_date >= datetime.utcnow():
-                examiner = User.authenticate(**data)
-                if not (examiner and examiner.is_examiner):
-                    return jsonify({'message':("The exam has already ended or has been previously attempted. "
-                                                "Contact an administrator to override.")}), 401                
-            
-            # Creates exam recording
-            exam_recording = ExamRecording(**data)
-            db.session.add(exam_recording)
-            db.session.commit()
-            return jsonify(exam_recording.to_dict()), 201
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
-    except MissingModelFields as e:
-        return jsonify({ 'message': e.args }), 400
-    except exc.SQLAlchemyError as e:
-        db.session.rollback()
-        return jsonify({ 'message': e.args }), 500
-    except Exception as e:
-        print(traceback.format_exc())
-        return jsonify({ 'message': e.args }), 500
-
-@api.route('/examinee/exam_recording', methods=('GET',))
-def get_exam_recording():
-    """
-    Gets exam recordings, can be filtered by user_id, exam_id
-    Returned results are limited by results_length and page_number.
-    """
-    try:
-        user_id = authenticate_token(request)
-        user = is_user(user_id)
-
-        if user:
-            results_query = db.session.query(User, Exam, ExamRecording, func.count(ExamWarning.exam_recording_id)).\
-                            filter(User.user_id==ExamRecording.user_id).\
-                            filter(Exam.exam_id==ExamRecording.exam_id).\
-                            outerjoin(ExamWarning, ExamWarning.exam_recording_id==ExamRecording.exam_recording_id).\
-                            group_by(ExamRecording.exam_recording_id)
-                            
-            results, next_page_exists = filter_results(results_query, ExamRecording)
-
-            exam_recordings = []
-            for u, e, er, ew_count in results:
-                duration = e.duration
-                # If exam recording has not ended (or does not have a time_ended value)
-                if er.time_ended is None:
-                    # Check if the time now has surpassed the latest possible finish time (recording start time + exam duration)
-                    latest_finish_time = er.time_started + timedelta(hours=duration.hour, minutes=duration.minute)
-                    if latest_finish_time <= datetime.utcnow():
-                        # If so, set the value to latest possible time
-                        er.time_ended = latest_finish_time
-                
-                exam_recordings.append({
-                    'exam_recording_id':er.exam_recording_id,
-                    'user_id':u.user_id,
-                    'first_name':u.first_name,
-                    'last_name':u.last_name,
-                    'exam_id':e.exam_id,
-                    'exam_name':e.exam_name,
-                    'subject_id':e.subject_id,
-                    'time_started':datetime_to_str(er.time_started),
-                    'time_ended':datetime_to_str(er.time_ended),
-                    'video_link':er.video_link,
-                    'warning_count':ew_count
-                })
-            db.session.commit()
-
-            return jsonify({'exam_recordings':exam_recordings, 'next_page_exists':next_page_exists}), 200
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
-    except (Exception, exc.SQLAlchemyError) as e:
-        return jsonify({ 'message': e.args }), 500
-    
-@api.route('/examinee/exam_recording/update', methods=('POST',))
-def update_exam_recording():
-    """
-    Updates existing exam recording record, limited by the parameter action (start, end, video_link)
-    """
-    try:
-        data = request.get_json()
-        user_id = authenticate_token(request)
-        user = is_user(user_id)
-
-        if user:
-            if not data.get('exam_recording_id') or not data.get('action'):
-                return jsonify({'message':'No exam_recording_id / action included in payload'}), 400
-
-            action = data['action']
-            exam_recording_id = data['exam_recording_id']
-            exam_recording = ExamRecording.query.get(exam_recording_id)
-            if exam_recording is None:
-                return jsonify({'message':'Exam recording with id {} not found'.format(exam_recording_id)}), 404
-            
-            if action == 'end':
-                # If end, end exam recording
-                if exam_recording.time_ended is not None:
-                    return jsonify({'message':'Exam recording with id {} has already ended'.format(exam_recording_id)}), 400
-                exam_recording.time_ended = datetime.utcnow()
-            elif action == 'update_link':
-                # If update video link, do so
-                if not data.get('video_link'):
-                    return jsonify({'message':'No video_link included in payload'}), 400
-                exam_recording.video_link = data['video_link']
-            else:
-                return jsonify({'message':'Include parameter action: end, update_link'}), 400
-            
-            db.session.commit()
-            
-            return jsonify(exam_recording.to_dict()), 200
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
-    except exc.SQLAlchemyError as e:
-        db.session.rollback()
-        return jsonify({ 'message': e.args }), 500
-    except Exception as e:
-        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examinee/deskcheck', methods=('POST',))
@@ -596,8 +607,8 @@ def deskcheck():
                     return jsonify(data), 200
                 raise Exception("Unsuccessful attempt to detect objects")
             return jsonify({ 'message': 'No image sent' }), 400
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403                      
+        
+        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403                      
     except (MaxRetryError, requests.ConnectionError, requests.ConnectTimeout) as e:
         return jsonify({ 'message': 'Could not connect to ODAPI.' }), 500
     except Exception as e:
@@ -611,7 +622,7 @@ def upload_face():
         user_id = authenticate_token(request)
         user = is_user(user_id)
 
-        if user:       
+        if user:   
             if None in (request.files.get('image'), request.form.get('user_id')):
                 return jsonify({'message':['No user_id / image included in payload']}), 400
 
@@ -629,8 +640,8 @@ def upload_face():
             img.save(path+"/face.jpg")
             
             return jsonify({'message':'Face image for user {} uploaded successfully'.format(user_id)}), 200
-        else:
-            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403                             
+        
+        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403                         
     except Exception as e:
         print(traceback.format_exc())
         return jsonify({'message': e.args}), 500
@@ -642,7 +653,7 @@ def face_authentication():
         user_id = authenticate_token(request)
         user = is_user(user_id)
 
-        if user:         
+        if user:        
             if None in (request.files.get('image'), request.form.get('user_id')):
                 return jsonify({'message':['No user_id / image included in payload']}), 400
             image = request.files["image"]
@@ -794,24 +805,26 @@ def filter_results(results, main_class=None):
     
 def is_examiner(user_id):
     role_id = UserRoles.query.filter_by(user_id=user_id).value('role_id')
-    
-    if role_id == 1:
-        return True
+    return role_id == 1
 
 def is_user(user_id):
     user = User.query.filter_by(user_id=user_id).first()
-
-    if user is not None:
-        return True
+    return user is not None
 
 def authenticate_token(request):
     try:
         token = request.headers.get('Authorization')
-        print(token)
+        #print(token)
         user_id = User.decode_auth_token(token)
 
         return user_id
     except Exception as e:
-        print(e)
+        #print(e)
         return jsonify({'message': e.args})
     
+def is_self(user_id):
+    """
+    Checks if a user is getting their own results, returns true for auth
+    """
+    query_user_id = request.args.get('user_id', default=None, type=int)
+    return user_id==query_user_id and user_id is not None
