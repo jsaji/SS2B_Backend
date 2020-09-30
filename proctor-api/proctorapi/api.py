@@ -12,7 +12,7 @@ import requests
 from dateutil import parser
 from sqlalchemy import exc, func
 from functools import wraps
-from .models import db, User, UserRoles, Exam, ExamRecording, ExamWarning, required_fields
+from .models import db, User, Role, UserRoles, Exam, ExamRecording, ExamWarning, required_fields
 from .services.misc import generate_exam_code, confirm_examiner, pre_init_check, InvalidPassphrase, MissingModelFields, datetime_to_str, parse_datetime
 import jwt
 import traceback
@@ -53,12 +53,18 @@ def register():
             if not is_examiner:
                 raise InvalidPassphrase()
             user.is_examiner = True
+            examiner_role = Role.query.filter_by(name='Examiner').first()
+            user.roles.append(examiner_role)
+        else:
+            examinee_role = Role.query.filter_by(name='Examinee').first()
+            user.roles.append(examinee_role)
         db.session.add(user)
         db.session.commit()
         return jsonify(user.to_dict()), 201
     except (MissingModelFields, InvalidPassphrase) as e:
         return jsonify({ 'message': e.args }), 400
-    except exc.IntegrityError:
+    except exc.IntegrityError as e:
+        print(e)
         db.session.rollback()
         return jsonify({ 'message': 'User with id {} exists.'.format(data['user_id']) }), 409
     except exc.SQLAlchemyError as e:
@@ -800,16 +806,12 @@ def is_examiner(user_id):
     
     if role_id == 1:
         return True
-    else:
-        return False
 
 def is_examinee(user_id):
     role_id = UserRoles.query.filter_by(user_id=user_id).value('role_id')
     
     if role_id == 2:
         return True
-    else:
-        return False
 
 def is_user(user_id):
     user = User.query.filter_by(user_id=user_id).first()

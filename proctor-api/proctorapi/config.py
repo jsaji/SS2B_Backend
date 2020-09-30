@@ -6,8 +6,10 @@
 
 
 class BaseConfig(object):
-    # ENV VARIABLES    
-    db_link = "mysql://dronegp_ss2b:8PR7FThX@115.70.228.70:3306/dronegp_ses2b"
+    # ENV VARIABLES   
+    f= open("proctor-api/db_link.txt","r")
+    db_link = f.read()
+    f.close() 
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = db_link
     SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -36,7 +36,7 @@ class User(db.Model):
     updated_date = db.Column(db.DateTime, default=datetime.utcnow)
     
     roles = db.relationship('Role', secondary='user_roles')
-    exam_recordings = relationship("ExamRecording", backref="users", cascade='all, delete')
+    exam_recordings = db.relationship("ExamRecording", backref="users", cascade='all, delete')
 
     def __init__(self, user_id, first_name, last_name, password, **kwargs):
         self.user_id = user_id
