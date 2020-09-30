@@ -103,7 +103,7 @@ def create_exam():
     try:
         # decode token and check role for access control
         data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
     
         if examiner:
@@ -135,15 +135,14 @@ def create_exam():
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examiner/exam', methods=('POST',))
+@api.route('/examiner/exam', methods=('GET',))
 def get_exam():
     """
     Gets existing exam records, can be filtered with exam_id and login_code.
     Returned results are limited by results_length and page_number.
     """
     try:
-        data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
 
         if examiner:
@@ -172,7 +171,7 @@ def update_exam():
     """
     try:
         data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
 
         if examiner:
@@ -222,18 +221,17 @@ def update_exam():
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 400
 
-@api.route('/examiner/exam/delete', methods=('POST',))
+@api.route('/examiner/exam/delete/<int:exam_id>', methods=('DELETE',))
 def delete_exam(exam_id):
     """
     Deletes an existing exam record, dependent on whether it has already started
     """
     try:
-        data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
         
         if examiner:
-            exam = Exam.query.get(data['exam_id'])
+            exam = Exam.query.get(exam_id)
             if exam:
                 if exam.start_date > datetime.utcnow():
                     db.session.delete(exam)
@@ -250,16 +248,14 @@ def delete_exam(exam_id):
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examiner/exam_recording/delete', methods=('POST',))
+@api.route('/examiner/exam_recording/<int:exam_recording_id>', methods=('DELETE',))
 def delete_exam_recording(exam_recording_id):
     """
     Deletes existing exam recording record.
     """
     try:
-        data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
-
         if examiner:
             exam_recording = ExamRecording.query.get(exam_recording_id)
             if exam_recording:
@@ -312,15 +308,14 @@ def create_exam_warning():
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examiner/exam_warning', methods=('POST',))
+@api.route('/examiner/exam_warning', methods=('GET',))
 def get_exam_warning():
     """
     Gets existing exam warning records, can be filtered with exam_warning_id, exam_recording_id, warning_time.
     Returned results are limited by results_length and page_number.
     """
     try:
-        data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
 
         if examiner:
@@ -365,7 +360,7 @@ def update_exam_warning():
     """
     try:
         data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
 
         if examiner:
@@ -391,14 +386,13 @@ def update_exam_warning():
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examiner/exam_warning/delete', methods=('POST',))
+@api.route('/examiner/exam_warning/delete/<int:exam_warning_id>', methods=('DELETE',))
 def delete_exam_warning(exam_warning_id):
     """
     Deletes existing exam warning record.
     """
     try:
-        data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
 
         if examiner:
@@ -417,15 +411,14 @@ def delete_exam_warning(exam_warning_id):
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examiner/examinee', methods=('POST',))
+@api.route('/examiner/examinee', methods=('GET',))
 def get_examinee():
     """
     Gets existing user records, can be filtered with user_id, first_name and last_name.
     Returned results are limited by results_length and page_number.
     """
     try:
-        data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
 
         if examiner:
@@ -453,7 +446,7 @@ def create_exam_recording():
     """
     try:
         data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         user = is_user(user_id)
 
         if user:
@@ -483,15 +476,14 @@ def create_exam_recording():
         print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
-@api.route('/examinee/exam_recording', methods=('POST',))
+@api.route('/examinee/exam_recording', methods=('GET',))
 def get_exam_recording():
     """
     Gets exam recordings, can be filtered by user_id, exam_id
     Returned results are limited by results_length and page_number.
     """
     try:
-        data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         user = is_user(user_id)
 
         if user:
@@ -542,7 +534,7 @@ def update_exam_recording():
     """
     try:
         data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         user = is_user(user_id)
 
         if user:
@@ -587,8 +579,7 @@ def deskcheck():
     and returns object classes, confidence levels and coordinates on the image
     """
     try:
-        data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         user = is_user(user_id)
 
         if user:
@@ -617,7 +608,7 @@ def deskcheck():
 def upload_face():
     try:
         data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         user = is_user(user_id)
 
         if user:       
@@ -648,7 +639,7 @@ def upload_face():
 def face_authentication():
     try:
         data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         user = is_user(user_id)
 
         if user:         
@@ -807,14 +798,20 @@ def is_examiner(user_id):
     if role_id == 1:
         return True
 
-def is_examinee(user_id):
-    role_id = UserRoles.query.filter_by(user_id=user_id).value('role_id')
-    
-    if role_id == 2:
-        return True
-
 def is_user(user_id):
     user = User.query.filter_by(user_id=user_id).first()
 
     if user is not None:
         return True
+
+def authenticate_token(request):
+    try:
+        token = request.headers.get('Authorization')
+        print(token)
+        user_id = User.decode_auth_token(token)
+
+        return user_id
+    except Exception as e:
+        print(e)
+        return jsonify({'message': e.args})
+    
