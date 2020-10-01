@@ -84,7 +84,7 @@ def login():
     
     token = jwt.encode(
         {
-        'exp': datetime.now() + timedelta(minutes=30),
+        'exp': datetime.now() + timedelta(minutes=90),
         'iat': datetime.now(),
         'sub': user.user_id
         },
