@@ -125,7 +125,7 @@ def create_exam():
             db.session.commit()
             return jsonify(exam.to_dict()), 201
         
-        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403
+        return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
@@ -171,7 +171,7 @@ def get_exam():
                     })
             return jsonify({'exams':exams, 'next_page_exists': next_page_exists}), 200
 
-        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403
+        return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
     
@@ -223,7 +223,7 @@ def update_exam():
                 return jsonify(exam.to_dict()), 200
 
             raise Exception('Cannot update an Exam that has already started.')
-        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403
+        return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -250,7 +250,7 @@ def delete_exam(exam_id):
                 return jsonify({'message':['Exam with id {} cannot be deleted as it has already started.'.format(exam_id)]}), 405
             return jsonify({'message':['Exam with id {} could not be found'.format(exam_id)]}), 404
         else:
-             return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403           
+             return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -344,7 +344,7 @@ def get_exam_recording():
 
             return jsonify({'exam_recordings':exam_recordings, 'next_page_exists':next_page_exists}), 200
         
-        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
+        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403
     except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
     
@@ -385,7 +385,7 @@ def update_exam_recording():
             
             return jsonify(exam_recording.to_dict()), 200
         
-        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403           
+        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -408,7 +408,7 @@ def delete_exam_recording(exam_recording_id):
                 db.session.commit()
                 return jsonify(exam_recording.to_dict()), 200
             return jsonify({'message':'Exam recording with id {} could not be found'.format(exam_recording_id)}), 404
-        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403           
+        return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -442,7 +442,7 @@ def create_exam_warning():
             db.session.commit()
             return jsonify({**exam_warning.to_dict(), 'warning_count':(len(prev_warnings)+1)}), 201
         
-        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403           
+        return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except MissingModelFields as e:
         return jsonify({ 'message': e.args }), 400
     except exc.SQLAlchemyError as e:
@@ -493,7 +493,7 @@ def get_exam_warning():
 
             return jsonify({'exam_warnings':payload, 'next_page_exists':next_page_exists}), 200
         else:
-            return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403           
+            return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
 
@@ -522,7 +522,7 @@ def update_exam_warning():
 
             return jsonify(exam_warning.to_dict()), 200
         else:
-            return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403           
+            return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -547,7 +547,7 @@ def delete_exam_warning(exam_warning_id):
                 return jsonify(exam_warning.to_dict()), 200
             return jsonify({ 'message': 'Exam warning with id {} could not be found'.format(exam_warning_id)}), 404
         else:
-            return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403             
+            return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except exc.SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({ 'message': e.args }), 500
@@ -579,7 +579,7 @@ def get_examinee():
                 })
             return jsonify({'users':users, 'next_page_exists':next_page_exists}), 200
         
-        return jsonify({'user_id': user_id, 'message': "access denied, not examiner." }), 403                    
+        return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except (Exception, exc.SQLAlchemyError) as e:
         return jsonify({ 'message': e.args }), 500
 
@@ -608,7 +608,7 @@ def deskcheck():
                 raise Exception("Unsuccessful attempt to detect objects")
             return jsonify({ 'message': 'No image sent' }), 400
         
-        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403                      
+        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403
     except (MaxRetryError, requests.ConnectionError, requests.ConnectTimeout) as e:
         return jsonify({ 'message': 'Could not connect to ODAPI.' }), 500
     except Exception as e:
@@ -622,16 +622,24 @@ def upload_face():
         user_id = authenticate_token(request)
         user = is_user(user_id)
 
-        if user:   
+        if True or user:
+            # Checks request has image and user_id
             if None in (request.files.get('image'), request.form.get('user_id')):
                 return jsonify({'message':['No user_id / image included in payload']}), 400
-
+            # Checks user has registered
+            user_id = request.form["user_id"]
+            if not is_user(user_id):
+                return jsonify({'message':['User needs to be registered to upload image']}), 400
+            # Creates image dir if not existing
             image = request.files["image"]
             image_name = image.filename
-            user_id = request.form["user_id"]
+            if not os.path.isdir('images'):
+                os.mkdir('images/')
             path = 'images/'+str(user_id)
+            # Creates new folder for user if not existing
             if not os.path.isdir(path):
                 os.mkdir(path)
+            # Removes existing files within user folder then saves image
             for root, dirs, files in os.walk(path):
                 for file in files:
                     os.remove(os.path.join(root, file))
@@ -641,7 +649,7 @@ def upload_face():
             
             return jsonify({'message':'Face image for user {} uploaded successfully'.format(user_id)}), 200
         
-        return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403                         
+        return jsonify({'user_id': user_id, 'message':['access denied, invalid user'] }), 403
     except Exception as e:
         print(traceback.format_exc())
         return jsonify({'message': e.args}), 500
@@ -679,7 +687,7 @@ def face_authentication():
             os.remove(image_name)
             return jsonify({'user_id': user_id, 'positive_id': positive_id}), 200
         else:
-            return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403                                        
+            return jsonify({'user_id': user_id, 'message': ['access denied, invalid user.'] }), 403
     except Exception as e:
         print(traceback.format_exc())
         return jsonify({'message': e.args}), 500

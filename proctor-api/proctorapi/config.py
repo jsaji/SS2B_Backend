@@ -6,8 +6,9 @@
 
 
 class BaseConfig(object):
-    # ENV VARIABLES   
-    f= open("proctorapi/db_link.txt","r")
+    # ENV VARIABLES
+    # When running from cmd/powershell/bash, run from the root directory above proctor-api
+    f= open("proctor-api/db_link.txt","r")
     db_link = f.read()
     f.close() 
     DEBUG = True
