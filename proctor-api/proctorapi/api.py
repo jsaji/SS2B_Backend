@@ -698,7 +698,7 @@ def get_request_args():
     """
     args = {}
     args['user_id'] = request.args.get('user_id', default=None, type=int)
-    args['is_examiner'] = request.args.get('is_examiner', default=False, type=bool)
+    args['is_examiner'] = request.args.get('is_examiner', default=0, type=int)
     args['first_name'] = request.args.get('first_name', default=None)
     args['last_name'] = request.args.get('last_name', default=None)
 
