@@ -581,6 +581,7 @@ def get_examinee():
         
         return jsonify({'user_id': user_id, 'message': ['access denied, not examiner']}), 403
     except (Exception, exc.SQLAlchemyError) as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
 
 @api.route('/examinee/deskcheck', methods=('POST',))
@@ -698,7 +699,8 @@ def get_request_args():
     """
     args = {}
     args['user_id'] = request.args.get('user_id', default=None, type=int)
-    args['is_examiner'] = request.args.get('is_examiner', default=0, type=int)
+    args['is_examiner'] = request.args.get('is_examiner', default=None, type=int)
+    if args['is_examiner'] is not None: args['is_examiner'] = args['is_examiner']==1
     args['first_name'] = request.args.get('first_name', default=None)
     args['last_name'] = request.args.get('last_name', default=None)
 
@@ -738,7 +740,7 @@ def filter_results(results, main_class=None):
     if args['user_id']: results = results.filter(User.user_id==args['user_id'])
     if args['first_name']: results = results.filter(User.first_name.startswith(args['first_name']))
     if args['last_name']: results = results.filter(User.last_name.startswith(args['last_name']))
-    if args['is_examiner']: results = results.filter(User.is_examiner==args['is_examiner'])
+    if args['is_examiner'] is not None: results = results.filter(User.is_examiner==args['is_examiner'])
 
     if args['exam_warning_id']: results = results.filter(ExamWarning.exam_warning_id==args['exam_warning_id'])
     if args['exam_recording_id']: results = results.filter(ExamRecording.exam_recording_id==args['exam_recording_id'])
