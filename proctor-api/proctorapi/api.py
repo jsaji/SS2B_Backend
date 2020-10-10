@@ -162,7 +162,9 @@ def get_exam():
                     })
             else:
                 login_code = request.args.get('login_code', default=None)
-                results = Exam.query.filter_by(login_code=login_code).all()
+                results = Exam.query.filter_by(login_code=login_code).\
+                                    filter(Exam.start_date <= datetime.utcnow()).\
+                                    filter(Exam.end_date >= datetime.utcnow()).all()
                 next_page_exists = False
                 for e in results:
                     exams.append({
@@ -273,14 +275,21 @@ def create_exam_recording():
             # Checks for existing recordings or if exam has already ended - can be overrided to create new recording if authorised
             existing_recording = ExamRecording.query.filter_by(user_id=data['user_id'], exam_id=data['exam_id']).first()
             exam = Exam.query.get(data['exam_id'])
-            if existing_recording or exam.end_date >= datetime.utcnow():
+            if existing_recording:
                 examiner = User.authenticate(**data)
                 if not (examiner and examiner.is_examiner):
-                    return jsonify({'message':("The exam has already ended or has been previously attempted. "
+                    return jsonify({'message':("The exam has been previously attempted. "
                                                 "Contact an administrator to override.")}), 401
+            elif exam.end_date <= datetime.utcnow():
+                return jsonify({'message':("The exam has already ended. "
+                                            "Contact an administrator to override.")}), 401
+            elif exam.start_date >= datetime.utcnow():
+                return jsonify({'message':("The exam has not started. "
+                                            "Contact an administrator to override.")}), 401
             
             # Creates exam recording
             exam_recording = ExamRecording(**data)
+            exam_recording.time_started = datetime.utcnow()
             db.session.add(exam_recording)
             db.session.commit()
             return jsonify(exam_recording.to_dict()), 201
@@ -334,6 +343,7 @@ def get_exam_recording():
                     'last_name':u.last_name,
                     'exam_id':e.exam_id,
                     'exam_name':e.exam_name,
+                    'duration':e.duration.strftime("%H:%M:%S"),
                     'subject_id':e.subject_id,
                     'time_started':datetime_to_str(er.time_started),
                     'time_ended':datetime_to_str(er.time_ended),
@@ -351,7 +361,7 @@ def get_exam_recording():
 @api.route('/examinee/exam_recording/update', methods=('POST',))
 def update_exam_recording():
     """
-    Updates existing exam recording record, limited by the parameter action (start, end, video_link)
+    Updates existing exam recording record, limited by the parameter action (end, video_link)
     """
     try:
         data = request.get_json()
