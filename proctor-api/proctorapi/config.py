@@ -3,12 +3,14 @@
     config.py
     - settings for the flask application object
 """
-
+import os
 
 class BaseConfig(object):
     # ENV VARIABLES
     # When running from cmd/powershell/bash, run from the root directory above proctor-api
-    f= open("proctor-api/db_link.txt","r")
+    script_dir = os.path.dirname(__file__)
+    file_path = os.path.join(script_dir, 'db_link.txt')
+    f = open(file_path,"r")
     db_link = f.read()
     f.close() 
     DEBUG = True
