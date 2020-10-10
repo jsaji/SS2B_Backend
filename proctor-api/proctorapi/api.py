@@ -706,7 +706,8 @@ def get_request_args():
 
     args['exam_warning_id'] = request.args.get('exam_warning_id', default=None, type=int)
     args['exam_recording_id'] = request.args.get('exam_recording_id', default=None, type=int)
-    args['in_progress'] = request.args.get('in_progress', default='', type=str).lower()
+    args['in_progress'] = request.args.get('in_progress', default=None, type=int)
+    if args['in_progress'] is not None: args['in_progress'] = args['in_progress']==1
     args['exam_id'] = request.args.get('exam_id', default=None, type=int)
     args['subject_id'] = request.args.get('subject_id', default=None, type=int)
     args['login_code'] = request.args.get('login_code', default=None)
@@ -764,8 +765,8 @@ def filter_results(results, main_class=None):
         if args['max_warnings']: results = results.having(func.count(ExamWarning.exam_recording_id)<=args['max_warnings'])
         if args['period_start']: results = results.filter(ExamRecording.time_started >= args['period_start'])
         if args['period_end']: results = results.filter(ExamRecording.time_ended <= args['period_end'])
-        if args['in_progress']=='true': results = results.filter(ExamRecording.time_ended == None)
-        elif args['in_progress']=='false': results = results.filter(ExamRecording.time_ended < datetime.utcnow())
+        if args['in_progress']==1: results = results.filter(ExamRecording.time_ended == None)
+        elif args['in_progress']==0: results = results.filter(ExamRecording.time_ended < datetime.utcnow())
         if args['order_by'] == 'time_ended':
             if args['order'] == 'asc': results = results.order_by(ExamRecording.time_ended.asc())
             else: results = results.order_by(ExamRecording.time_ended.desc())
