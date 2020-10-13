@@ -280,6 +280,8 @@ def create_exam_recording():
                 if not (examiner and examiner.is_examiner):
                     return jsonify({'message':("The exam has been previously attempted. "
                                                 "Contact an administrator to override.")}), 401
+            if not exam:
+                return jsonify({'message':("The exam does not exist.")}), 401
             elif exam.end_date <= datetime.utcnow():
                 return jsonify({'message':("The exam has already ended. "
                                             "Contact an administrator to override.")}), 401
@@ -326,7 +328,10 @@ def get_exam_recording():
             results, next_page_exists = filter_results(results_query, ExamRecording)
 
             exam_recordings = []
+            in_progress = request.args.get('in_progress', default=None, type=int)
+            if in_progress is not None: in_progress = in_progress==1
             for u, e, er, ew_count in results:
+                updated = False
                 duration = e.duration
                 # If exam recording has not ended (or does not have a time_ended value)
                 if er.time_ended is None:
@@ -334,22 +339,24 @@ def get_exam_recording():
                     latest_finish_time = er.time_started + timedelta(hours=duration.hour, minutes=duration.minute)
                     if latest_finish_time <= datetime.utcnow():
                         # If so, set the value to latest possible time
+                        updated = True
                         er.time_ended = latest_finish_time
-                
-                exam_recordings.append({
-                    'exam_recording_id':er.exam_recording_id,
-                    'user_id':u.user_id,
-                    'first_name':u.first_name,
-                    'last_name':u.last_name,
-                    'exam_id':e.exam_id,
-                    'exam_name':e.exam_name,
-                    'duration':e.duration.strftime("%H:%M:%S"),
-                    'subject_id':e.subject_id,
-                    'time_started':datetime_to_str(er.time_started),
-                    'time_ended':datetime_to_str(er.time_ended),
-                    'video_link':er.video_link,
-                    'warning_count':ew_count
-                })
+                # Check so that when querying by in_progress = 1 / True, we dont include recordings that added time_ended to
+                if not (updated and in_progress):
+                    exam_recordings.append({
+                        'exam_recording_id':er.exam_recording_id,
+                        'user_id':u.user_id,
+                        'first_name':u.first_name,
+                        'last_name':u.last_name,
+                        'exam_id':e.exam_id,
+                        'exam_name':e.exam_name,
+                        'duration':e.duration.strftime("%H:%M:%S"),
+                        'subject_id':e.subject_id,
+                        'time_started':datetime_to_str(er.time_started),
+                        'time_ended':datetime_to_str(er.time_ended),
+                        'video_link':er.video_link,
+                        'warning_count':ew_count
+                    })
             db.session.commit()
 
             return jsonify({'exam_recordings':exam_recordings, 'next_page_exists':next_page_exists}), 200
