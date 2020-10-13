@@ -350,6 +350,7 @@ def get_exam_recording():
                         'last_name':u.last_name,
                         'exam_id':e.exam_id,
                         'exam_name':e.exam_name,
+                        'login_code':e.login_code,
                         'duration':e.duration.strftime("%H:%M:%S"),
                         'subject_id':e.subject_id,
                         'time_started':datetime_to_str(er.time_started),
