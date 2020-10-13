@@ -334,7 +334,7 @@ def get_exam_recording():
                 updated = False
                 duration = e.duration
                 # If exam recording has not ended (or does not have a time_ended value)
-                if er.time_ended is None:
+                if er.time_started is not None and er.time_ended is None:
                     # Check if the time now has surpassed the latest possible finish time (recording start time + exam duration)
                     latest_finish_time = er.time_started + timedelta(hours=duration.hour, minutes=duration.minute)
                     if latest_finish_time <= datetime.utcnow():
@@ -364,6 +364,7 @@ def get_exam_recording():
         
         return jsonify({'user_id': user_id, 'message': "access denied, invalid user." }), 403
     except (Exception, exc.SQLAlchemyError) as e:
+        print(traceback.format_exc())
         return jsonify({ 'message': e.args }), 500
     
 @api.route('/examinee/exam_recording/update', methods=('POST',))
