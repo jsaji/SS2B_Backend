@@ -220,7 +220,7 @@ def update_exam():
                 if exam.start_date > exam.end_date:
                     raise Exception('Exam end_date precedes Exam start_date.')
 
-                #db.session.commit()
+                db.session.commit()
 
                 return jsonify(exam.to_dict()), 200
 
@@ -442,7 +442,7 @@ def create_exam_warning():
     """
     try:
         data = request.get_json()
-        user_id = User.decode_auth_token(data['token'])
+        user_id = authenticate_token(request)
         examiner = is_examiner(user_id)
 
         if examiner:
@@ -798,8 +798,8 @@ def filter_results(results, main_class=None):
         if args['login_code']: results = results.filter(Exam.login_code.startswith(args['login_code']))
         if args['period_start']: results = results.filter(Exam.start_date >= args['period_start'])
         if args['period_end']: results = results.filter(Exam.end_date <= args['period_end'])
-        if args['in_progress'] == 'true': results = results.filter(Exam.end_date >= datetime.utcnow(), Exam.start_date <= datetime.utcnow())
-        elif args['in_progress'] == 'false': results = results.filter(Exam.end_date <= datetime.utcnow())
+        if args['in_progress'] == 1: results = results.filter(Exam.end_date > datetime.utcnow(), Exam.start_date < datetime.utcnow())
+        elif args['in_progress'] == 0: results = results.filter(Exam.end_date <= datetime.utcnow())
         if args['order_by'] == 'end_date':
             if args['order'] == 'asc': results = results.order_by(Exam.end_date.asc())
             else: results = results.order_by(Exam.start_date.desc())
