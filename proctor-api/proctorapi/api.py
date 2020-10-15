@@ -24,6 +24,7 @@ import os
 import numpy
 import pickle
 import face_recognition
+from ftplib import FTP
 
 api = Blueprint('api', __name__)
 
@@ -90,7 +91,7 @@ def login():
         },
         current_app.config['SECRET_KEY'],
         algorithm='HS256')
-    print(token)
+    #print(token)
     user_id = data['user_id']
     user = User.query.get(user_id)
     return jsonify({ 'user': user.to_dict(), 'token': token.decode('UTF-8') }), 200
@@ -650,23 +651,42 @@ def upload_face():
             user_id = request.form["user_id"]
             if not is_user(user_id):
                 return jsonify({'message':['User needs to be registered to upload image']}), 400
+            
+            # Connects to FTP server
+            FTP_DOMAIN = current_app.config['FTP_DOMAIN']
+            FTP_USER = current_app.config['FTP_USER']
+            FTP_PASSWD = current_app.config['FTP_PASSWD']
+            ftp = FTP(FTP_DOMAIN)
+            ftp.login(user=FTP_USER, passwd=FTP_PASSWD)
+            ftp.cwd('ses2b')
+            folders = ftp.nlst()
             # Creates image dir if not existing
+            if 'images' not in folders:
+                ftp.mkd('images')
+
             image = request.files["image"]
             image_name = image.filename
-            if not os.path.isdir('images'):
-                os.mkdir('images/')
-            path = 'images/'+str(user_id)
+            ftp.cwd('images')
+            user_id_str = str(user_id)
+            folders = ftp.nlst()
+
             # Creates new folder for user if not existing
-            if not os.path.isdir(path):
-                os.mkdir(path)
-            # Removes existing files within user folder then saves image
-            for root, dirs, files in os.walk(path):
-                for file in files:
-                    os.remove(os.path.join(root, file))
+            if user_id_str not in folders:
+                ftp.mkd(user_id_str)
+            ftp.cwd(user_id_str)
+
+            # Saves image locally temporarily before uploading
+            temp_img_name = "{}.jpg".format(user_id)
             img = Image.open(image)
             img = img.convert('RGB')
-            img.save(path+"/face.jpg")
+            img.save(os.path.join(os.getcwd(), temp_img_name))
             
+            temp_img = open(temp_img_name, 'rb')
+            ftp.storbinary('STOR {}'.format(temp_img_name), temp_img)
+            temp_img.close()
+            ftp.quit()
+            os.remove(temp_img_name)
+
             return jsonify({'message':'Face image for user {} uploaded successfully'.format(user_id)}), 200
         
         return jsonify({'user_id': user_id, 'message':['access denied, invalid user'] }), 403
@@ -680,8 +700,8 @@ def face_authentication():
         data = request.get_json()
         user_id = authenticate_token(request)
         user = is_user(user_id)
-
-        if user:        
+        
+        if user:
             if None in (request.files.get('image'), request.form.get('user_id')):
                 return jsonify({'message':['No user_id / image included in payload']}), 400
             image = request.files["image"]
@@ -693,17 +713,43 @@ def face_authentication():
             positive_id = False
             if face_local1:
                 image1_encode = face_recognition.face_encodings(image1, face_local1)[0]
+                
+                # Connects to FTP server
+                FTP_DOMAIN = current_app.config['FTP_DOMAIN']
+                FTP_USER = current_app.config['FTP_USER']
+                FTP_PASSWD = current_app.config['FTP_PASSWD']
+                ftp = FTP(FTP_DOMAIN)
+                ftp.login(user=FTP_USER, passwd=FTP_PASSWD)
 
-                for root, dirs, files in os.walk('images/' + str(user_id)):
-                    for file in files:
-                        if file.endswith("png") or file.endswith("jpg"):
-                            path = os.path.join(root, file)
-                            image2 = face_recognition.load_image_file(path)
+                ftp.cwd('ses2b')
+                folders = ftp.nlst()
+                # Creates image dir if not existing
+                if 'images' in folders:
+                    
+                    ftp.cwd('images')
+                    user_id_str = str(user_id)
+                    user_folders = ftp.nlst()
+                    
+                    # Creates new folder for user if not existing
+                    if user_id_str in user_folders:
+                        ftp.cwd(user_id_str)
+                        files = ftp.nlst()
+                        if user_id_str+'.jpg' in files:
+
+                            temp_image_name = os.path.join(os.getcwd(), user_id_str+'.jpg')
+                            temp_image = open(temp_image_name, "wb")
+                            ftp.retrbinary('RETR '+ user_id_str+'.jpg', temp_image.write)
+                            temp_image.close()
+
+                            image2 = face_recognition.load_image_file(temp_image_name)
                             image2_encode = face_recognition.face_encodings(image2) [0]
 
                             result = face_recognition.compare_faces([image1_encode], image2_encode)
                             positive_id = bool(result[0])
-                                
+                            os.remove(temp_image_name)
+
+                ftp.quit()
+
             os.remove(image_name)
             return jsonify({'user_id': user_id, 'positive_id': positive_id}), 200
         else:

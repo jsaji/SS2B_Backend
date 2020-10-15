@@ -10,12 +10,20 @@ class BaseConfig(object):
     # When running from cmd/powershell/bash, run from the root directory above proctor-api
     script_dir = os.path.dirname(__file__)
     file_path = os.path.join(script_dir, 'db_link.txt')
-    f = open(file_path,"r")
-    db_link = f.read()
-    f.close() 
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = db_link
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = ''
+    FTP_DOMAIN = ''
+    FTP_USER = ''
+    FTP_PASSWD = ''
+    SECRET_KEY = ''
+    with open(file_path, "r") as conn_file:
+        lines = conn_file.read().split('\n')
+        SQLALCHEMY_DATABASE_URI = lines[0]
+        FTP_DOMAIN = lines[1]
+        FTP_USER = lines[2]
+        FTP_PASSWD = lines[3]
+        SECRET_KEY = lines[4]
 
-    SECRET_KEY = "dd02dbe50eb41792067d9d650cd3ba58df0c90c6466ccea7"
+    DEBUG = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
     
