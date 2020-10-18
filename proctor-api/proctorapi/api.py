@@ -639,7 +639,6 @@ def deskcheck():
 @api.route('/examinee/upload_face', methods=('POST',))
 def upload_face():
     try:
-        data = request.get_json()
         user_id = authenticate_token(request)
         user = is_user(user_id)
 
@@ -804,14 +803,14 @@ def filter_results(results, main_class=None):
     args = get_request_args()
     # Big block of ifs to filter
     if args['user_id']: results = results.filter(User.user_id==args['user_id'])
-    if args['first_name']: results = results.filter(User.first_name.startswith(args['first_name']))
-    if args['last_name']: results = results.filter(User.last_name.startswith(args['last_name']))
+    if args['first_name']: results = results.filter(User.first_name.ilike('%{}%'.format(args['first_name'])))
+    if args['last_name']: results = results.filter(User.last_name.ilike('%{}%'.format(args['last_name'])))
     if args['is_examiner'] is not None: results = results.filter(User.is_examiner==args['is_examiner'])
 
     if args['exam_warning_id']: results = results.filter(ExamWarning.exam_warning_id==args['exam_warning_id'])
     if args['exam_recording_id']: results = results.filter(ExamRecording.exam_recording_id==args['exam_recording_id'])
     if args['subject_id']: results = results.filter(Exam.subject_id==args['subject_id'])
-    if args['exam_name']: results = results.filter(Exam.exam_name.startswith(args['exam_name']))
+    if args['exam_name']: results = results.filter(Exam.exam_name.ilike('%{}%'.format(args['exam_name'])))
 
     if main_class == ExamWarning:
         if args['period_start']: results = results.filter(ExamWarning.warning_time >= args['period_start'])
@@ -841,7 +840,7 @@ def filter_results(results, main_class=None):
 
     elif main_class == Exam:
         if args['exam_id']: results = results.filter(Exam.exam_id==args['exam_id'])
-        if args['login_code']: results = results.filter(Exam.login_code.startswith(args['login_code']))
+        if args['login_code']: results = results.filter(Exam.login_code.ilike('%{}%'.format(args['login_code'])))
         if args['period_start']: results = results.filter(Exam.start_date >= args['period_start'])
         if args['period_end']: results = results.filter(Exam.end_date <= args['period_end'])
         if args['in_progress'] == 1: results = results.filter(Exam.end_date > datetime.utcnow(), Exam.start_date < datetime.utcnow())
