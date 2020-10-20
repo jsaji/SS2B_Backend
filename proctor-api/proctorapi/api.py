@@ -357,7 +357,8 @@ def get_exam_recording():
                         'time_started':datetime_to_str(er.time_started),
                         'time_ended':datetime_to_str(er.time_ended),
                         'video_link':er.video_link,
-                        'warning_count':ew_count
+                        'warning_count':ew_count,
+                        'document_link': e.document_link
                     })
             db.session.commit()
 
